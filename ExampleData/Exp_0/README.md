@@ -2,6 +2,8 @@
 
 Data example : 
 
-The root of this folder contains a timelapse 3 channel image exported by Slidebook.
-
-Exp_0 contains several log files. Each for one device, plus a raw data image for an additional camera.
+- Two cameras (a wide field and a fluorescent)
+- A tracked object (lines refer to the wide field camera)
+- A micromanipulator (MP285_Left)
+- A linear actuator (Zaber)
+- User comments
