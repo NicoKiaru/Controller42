@@ -1,9 +1,10 @@
 classdef Device < handle
     %UNTITLED Summary of this class goes here
     %   Detailed explanation goes here
+    
     properties
-        deviceType;
         deviceName;
+        deviceType;
         hDeviceGUI; % handle to the GUI figure
         
         % ----- Event timing
@@ -20,7 +21,7 @@ classdef Device < handle
     end
     
     methods
-        function self=Device(name,pos)
+        function self=Device(name,type,pos)
             self.deviceName=name;
             self.initGUI(name,pos);
             self.isRecording=0;

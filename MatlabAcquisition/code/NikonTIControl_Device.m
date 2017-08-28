@@ -21,7 +21,8 @@ classdef NikonTIControl_Device < Device
             name=name_identifier;
             
             % Calls superclass constructor with GUI size as an input
-            self = self@Device(name,position);
+            self = self@Device(name,position);            
+            self.deviceType='NIKONTICONTROL';
             %pause(1);
             %javaclasspath({'C:/Micro-Manager/ij.jar','C:/Micro-Manager/plugins/Micro-Manager/MMCoreJ.jar','C:/Micro-Manager/plugins/Micro-Manager/MMJ_.jar','C:/Micro-Manager/plugins/Micro-Manager/bsh-2.0b4.jar','C:/Micro-Manager/plugins/Micro-Manager/swingx-0.9.5.jar'});
             %pause(1);

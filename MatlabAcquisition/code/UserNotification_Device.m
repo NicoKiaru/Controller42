@@ -19,6 +19,7 @@ classdef UserNotification_Device < Device
             
             % Calls superclass constructor with GUI size as an input
             self = self@Device(name,position);
+            self.deviceType='USERNOTIFICATION';
             self.defaultString=' ';
             self.buildGui();
             

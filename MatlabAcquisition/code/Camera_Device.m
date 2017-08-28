@@ -65,7 +65,8 @@ classdef Camera_Device < Device
             name=name_identifier; % Device name
             
             % Calls superclass constructor with GUI size as an input
-            self = self@Device(name,pos);
+            self = self@Device(name,pos);            
+            self.deviceType='CAMERA';
             
             self.cam_type=upper(ctype);
             

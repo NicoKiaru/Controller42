@@ -66,7 +66,8 @@ classdef MP_285_Device < Device
             name=name_identifier;
             
             % Calls superclass constructor with GUI size as an input
-            self = self@Device(name,pos);
+            self = self@Device(name,pos);            
+            self.deviceType='MP_285';
             self.P0 = [0;0;0];
             self.iX=inX;
             self.iY=inY;
@@ -212,9 +213,9 @@ classdef MP_285_Device < Device
         end
         
         function doStepMove(self,x,y,z)
-             disp("fetching current position");
+             disp('fetching current position');
              self.AP=self.getPosA();
-             disp("Ok");
+             disp('Ok');
              pause(0.1);
              invX=get(self.invertXBox,'Value');
              invX=(0.5-invX)/0.5;
@@ -225,11 +226,11 @@ classdef MP_285_Device < Device
              %self.AP(1)+x*self.stepDistance
              %self.AP(2)+y*self.stepDistance
              %self.AP(3)+z*self.stepDistance
-             disp("Sending order for next position");
+             disp('Sending order for next position');
              self.setPosA(self.AP(1)+x*self.stepDistance*invX,...
                           self.AP(2)+y*self.stepDistance*invY,...
                           self.AP(3)+z*self.stepDistance*invZ);
-             disp("Ok");
+             disp('Ok');
         end
         % ---------- Stops micromanipulator movement
         function stop(MP)

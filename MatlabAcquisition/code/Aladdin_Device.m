@@ -49,6 +49,7 @@ classdef Aladdin_Device < Device
             
             % Calls superclass constructor with GUI size as an input
             self = self@Device(name,pos);
+            self.deviceType='ALADDIN';
             
             % set communication device properties
             self.BaudRate=BR; % set serial port communication properties

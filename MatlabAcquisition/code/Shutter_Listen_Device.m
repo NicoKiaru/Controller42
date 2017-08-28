@@ -30,7 +30,8 @@ classdef Shutter_Listen_Device < Device
             name=name_identifier;
             
             % Calls superclass constructor with GUI size as an input
-            self = self@Device(name,position);
+            self = self@Device(name,position);            
+            self.deviceType='SHUTTER_LISTEN';
             %self.defaultString=' ';
            
             % initialise device with specified port

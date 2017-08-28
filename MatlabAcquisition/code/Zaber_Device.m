@@ -70,7 +70,8 @@ classdef Zaber_Device < Device
             name=name_identifier;
             
             % Calls superclass constructor with GUI size as an input
-            self = self@Device(name,pos);
+            self = self@Device(name,pos);            
+            self.deviceType='ZABER';
             
             % set communication device properties
             self.BaudRate=BR;

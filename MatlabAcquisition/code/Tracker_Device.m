@@ -62,7 +62,8 @@ classdef Tracker_Device < Device
             name=name_identifier; % Device name
             
             % Calls superclass constructor with GUI size as an input
-            self = self@Device(name,pos);
+            self = self@Device(name,pos);            
+            self.deviceType='TRACKER';
             % Sets bounding rectangle for tracking device
             self.startX=xS;
             self.endX=xE;

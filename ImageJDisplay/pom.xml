@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+		http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.scijava</groupId>
+		<artifactId>pom-scijava</artifactId>
+		<version>16.2.0</version>
+		<relativePath />
+	</parent>
+
+	<groupId>eu.kiaru</groupId>
+	<artifactId>Controller42Display</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+
+	<name>Controller42Display</name>
+	<description>A set of commands to display Controller 42 acquisitions in Fiji.</description>
+	<url>https://github.com/NicoKiaru/Controller42</url>
+	<inceptionYear>2017</inceptionYear>
+	<organization>
+		<url>http://kiaru.eu/</url>
+		<name>University of Geneva</name>
+	</organization>
+	<licenses>
+		<license>
+			<name>Simplified BSD License</name>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<!-- See https://imagej.net/Team -->
+		<developer>
+			<id>nicokiaru</id>
+			<name>Nicolas Chiaruttini</name>
+			<url>http://imagej.net/User:NicoKiaru</url>
+			<roles>			
+				<role>big_mamamouchi</role>
+				<role>founder</role>
+				<role>lead</role>
+				<role>developer</role>
+				<role>debugger</role>
+				<role>reviewer</role>
+				<role>support</role>
+				<role>maintainer</role>
+			</roles>
+		</developer>
+	</developers>
+	<contributors>
+	</contributors>
+
+	<mailingLists>
+		<mailingList>
+			<name>ImageJ Forum</name>
+			<archive>http://forum.imagej.net/</archive>
+		</mailingList>
+	</mailingLists>
+
+	<scm>
+		<connection>scm:git:git://github.com/NicoKiaru/MinJOGLCmd</connection>
+		<developerConnection>scm:git:git@github.com:NicoKiaru/MinJOGLCmd</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/NicoKiaru/Controller42</url>
+	</scm>
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/NicoKiaru/Controller42/issues</url>
+	</issueManagement>
+	<ciManagement>
+		<system>None</system>
+	</ciManagement>
+
+	<properties>
+		<package-name>eu.kiaru.ij</package-name>
+		<main-class>eu.kiaru.ij.MinJOGLIJCommand</main-class>
+		<license.licenseName>bsd_2</license.licenseName>
+		<license.copyrightOwners>Me, myself and I. Corp.</license.copyrightOwners>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>imagej.public</id>
+			<url>http://maven.imagej.net/content/groups/public</url>
+		</repository>
+		
+	</repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>imagej</artifactId>
+		</dependency>
+	</dependencies>
+</project>
