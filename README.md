@@ -1,6 +1,9 @@
 # Controller 42
 
-Il s’agit d’un logiciel permettant de contrôler différents appareils (pousse-seringue, shutter, camera, tracker de billes, actuateurs linéaires, micromanipulateurs) de manière coordonnée et unifiée au sein d’un même programme, le tout écrit en Matlab.
+Il s’agit d’un logiciel permettant de contrôler différents appareils (pousse-seringue, shutter, camera, tracker de billes, actuateurs linéaires, micromanipulateurs) de manière coordonnée et unifiée au sein d’un même programme.
+
+L'acquisition se fait en Matlab.
+La visualization des données s'effectue sous ImageJ (en cours...).
 
 L’avantage de ce logiciel réside dans son aspect modulaire et dans la standardisation de la gestion des « devices ». Lors du démarrage d’une acquisition, tous les devices générent au moins un fichier texte de type device_name_log.txt, qui contient toutes les informations d’état ou de changement d’état du device, en précisant l’heure de chaque évènement. Pour les devices nécessitant plusieurs types de fichiers, par exemple pour une l’acquisition vidéo par une caméra, un fichier vidéo est créé en parallele.
 
