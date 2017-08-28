@@ -4,6 +4,6 @@ import mmcorej.*;
 c42=Controller_42();
 %c42.initCfg('ini/spinning42_130125_FULL.ini'); For old computer
 
-c42.initCfg('ini/spinning42_160127_FULL.ini');
+c42.initCfg('ini/dobby.ini');
 c42.initDevicesWindow();
 c42.showGui();

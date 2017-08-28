@@ -77,11 +77,11 @@ classdef MP_285_Device < Device
             self.init(); % initialise serial port communication
             self.available=1;
             self.V=10;
-            self.Vmode='f';
+            self.Vmode='c';
             self.stepDistance=10; %(microns
             % reference Z position
             % self.Z0=0;
-            self.delayTrack=0.1; % in s, a lower value will lead to SP over-run error (see MP285 Manual)
+            self.delayTrack=0.2; % in s, a lower value will lead to SP over-run error (see MP285 Manual)
             self.trackTimer=timer('Period',self.delayTrack,'ExecutionMode','fixedSpacing','TimerFcn',{@(src,event)self.trackMP285(src,event)});
             start(self.trackTimer);
             
@@ -212,7 +212,10 @@ classdef MP_285_Device < Device
         end
         
         function doStepMove(self,x,y,z)
-            self.AP=self.getPosA();
+             disp("fetching current position");
+             self.AP=self.getPosA();
+             disp("Ok");
+             pause(0.1);
              invX=get(self.invertXBox,'Value');
              invX=(0.5-invX)/0.5;
              invY=get(self.invertYBox,'Value');
@@ -222,9 +225,11 @@ classdef MP_285_Device < Device
              %self.AP(1)+x*self.stepDistance
              %self.AP(2)+y*self.stepDistance
              %self.AP(3)+z*self.stepDistance
+             disp("Sending order for next position");
              self.setPosA(self.AP(1)+x*self.stepDistance*invX,...
                           self.AP(2)+y*self.stepDistance*invY,...
                           self.AP(3)+z*self.stepDistance*invZ);
+             disp("Ok");
         end
         % ---------- Stops micromanipulator movement
         function stop(MP)

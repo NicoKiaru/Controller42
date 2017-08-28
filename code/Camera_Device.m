@@ -79,9 +79,9 @@ classdef Camera_Device < Device
             set(self.cam.vid,'FramesPerTrigger',1);         % Probably useless...
             set(self.cam.vid,'FramesAcquiredFcnCount',1);   % Call frame acquired callback function every one image is acquired (to make possible real time image processing)
           
-            if (strcmpi(self.cam_type,'PIXELINK')==1)
-                 set(self.cam.src,'ExposureMode','manual');
-            end
+            %if (strcmpi(self.cam_type,'PIXELINK')==1)
+            %     set(self.cam.src,'ExposureMode','manual');
+            %end
             % self.cam.src.Exposure=-5;
             % fetch image size from camera
             self.imageSize = fliplr(self.cam.vidRes);     
@@ -186,17 +186,17 @@ classdef Camera_Device < Device
                                                'callback',{@(src,event)self.editExpTimeCB(src,event)}); %an edit box
                 end
                 
-                if (strcmpi(self.cam_type,'PIXELINK')==1)
-                     uicontrol('style','text',...
-                          'position',[260 20 100 20],...
-                          'string','Exposure (-14..1)');
-                
-                    % Exposure time control (edit text)
-                    self.edit_exp_time = uicontrol('style','edit',...
-                                               'position',[360 20 40 20],...
-                                               'string',num2str(self.cam.src.Exposure),...
-                                               'callback',{@(src,event)self.editExpTimeCB(src,event)}); %an edit box
-                end
+%                 if (strcmpi(self.cam_type,'PIXELINK')==1)
+%                      uicontrol('style','text',...
+%                           'position',[260 20 100 20],...
+%                           'string','Exposure (-14..1)');
+%                 
+%                     % Exposure time control (edit text)
+%                     self.edit_exp_time = uicontrol('style','edit',...
+%                                                'position',[360 20 40 20],...
+%                                                'string',num2str(self.cam.src.Exposure),...
+%                                                'callback',{@(src,event)self.editExpTimeCB(src,event)}); %an edit box
+%                 end
                 
                 if (strcmpi(self.cam_type,'GUPPY_GENTL')==1)
                     % GAIN CANNOT BE SET WITH THIS ADAPTOR!!!!! Please USE
@@ -265,7 +265,7 @@ classdef Camera_Device < Device
                
                for i=1:length(self.trackers)
                 p=mouse_pos(1,[1:2]);
-                p(2)=480-p(2); % because image display is flipped
+                %p(2)=480-p(2); % because image display is flipped
                 self.trackers{i}.clickNotify(p);
                end
 
@@ -370,14 +370,14 @@ classdef Camera_Device < Device
 
             set(0, 'CurrentFigure', self.hDeviceGUI);                % set camera GUI as active figure
             %subplot(5,3,4:15);                                       % set location to show prcessed image
-            set(self.hImage_processed, 'CData', flipdim(uint8(res),1));
+            set(self.hImage_processed, 'CData', res);%flipdim(uint8(res),1));
 
             %imshow(flipdim(uint8(res),1));                           % show it and flip it 
             
             % --------- TRACKERS
             for i=1:length(self.trackers)
                 set(0, 'CurrentFigure', self.hDeviceGUI);
- %              rectangle('position',self.trackers{i}.getRect()); % PB works only with one tracker!!!!
+ %              rectangle('position',self.trackers{i}.getRect()); % PB worknotifs only with one tracker!!!!
                 self.trackers{i}.showPreview();
                 %hold on
                 %rect  = [ 150 40 80 70]
@@ -499,9 +499,9 @@ classdef Camera_Device < Device
                     infos=[infos sprintf('\tEXP_TIME (micros) =%d\n',self.cam.src.ExtendedShutter)];
                     infos=[infos sprintf('\tGAIN =%d\n',self.cam.src.Gain)];
               end
-              if (strcmpi(self.cam_type,'PIXELINK')==1)
-                    infos=[infos sprintf('\tEXP_TIME =%d\n',self.cam.src.Exposure)];
-              end
+       %       if (strcmpi(self.cam_type,'PIXELINK')==1)
+       %             infos=[infos sprintf('\tEXP_TIME =%d\n',self.cam.src.Exposure)];
+       %       end
             infos=[infos sprintf('Image Size X (pixels) = %d\n', self.imageSize(2))];
             infos=[infos sprintf('Image Size Y (pixels) = %d\n', self.imageSize(1))];
           
@@ -540,7 +540,7 @@ classdef Camera_Device < Device
                             self.video_file = fopen(self.video_file_name, 'w');
                             % First frame= Current Background image
                             fwrite(self.video_file, uint8(self.BG_image));
-                            self.MAX_FRAMES_PER_FILE=round(self.MAX_SIZE_PER_FILE/(640*480));
+                            self.MAX_FRAMES_PER_FILE=round(self.MAX_SIZE_PER_FILE/(780*582));
                
                 end
             

@@ -61,6 +61,7 @@ classdef Zaber_Device < Device
         Z0redefined;
         ZMoved;
         ZOutOfRange;
+        ZTracked;
     end
     
     methods
@@ -92,8 +93,9 @@ classdef Zaber_Device < Device
             % set listener for this device
             addlistener(self,'Z0redefined',@Zaber_Device.listen_Z0redefined);
             addlistener(self,'ZMoved',@Zaber_Device.listen_ZMoved);
+            addlistener(self,'ZTracked',@Zaber_Device.listen_ZTracked);
             
-            self.delayTrack=0.1; % in s, a lower value couls lead to over-run error ?
+            self.delayTrack=0.1/2; % in s, a lower value couls lead to over-run error ?
             self.trackTimer=timer('Period',self.delayTrack,'ExecutionMode','fixedSpacing','TimerFcn',{@(src,event)self.trackZaber(src,event)});
             start(self.trackTimer);
          end
@@ -208,6 +210,7 @@ classdef Zaber_Device < Device
                      end
                      
                 end
+                notify(ZB,'ZTracked');
           %  end
          end
          
@@ -252,7 +255,7 @@ classdef Zaber_Device < Device
             command=uint8(20); % Move Absolute - Cmd 20
             Zp=int32(z/self.size_per_step); % Pos translated in microstep number
             if (Zp>-1)&&(Zp<(self.MAXZ/self.size_per_step)) % Check if command is in range, 58 is arbitrary\
-                self.CurrZ=z;%-self.Z0;
+                %self.CurrZ=z;%-self.Z0;
                 self.last_event_clock=clock;
 
                 fwrite(self.s_id,self.dev_num,'uint8');
@@ -449,10 +452,10 @@ classdef Zaber_Device < Device
         % ---- Called if Z0 is redefined
         function listen_Z0redefined(src,event)
            %disp([src.stringEventHeader  char(9) 'Z0 redefined to' char(9)  num2str(src.Z0)]);
-           if (src.isRecording==1)
-               logline=[src.stringEventHeader  char(9) 'Z0 redefined to' char(9)  num2str(src.Z0)];
-               src.saveLog(logline);
-           end
+         %  if (src.isRecording==1)
+         %      logline=[src.stringEventHeader  char(9) 'Z0 redefined to' char(9)  num2str(src.Z0)];
+         %      src.saveLog(logline);
+         %  end
            src.updateGuiState();
         end
         
@@ -460,14 +463,24 @@ classdef Zaber_Device < Device
         % through a command)
         function listen_ZMoved(src,event)
            %disp([src.stringEventHeader  char(9) 'Z moved to' char(9)  num2str(src.CurrZ)]);
-           if (src.isRecording==1)
+        %   if (src.isRecording==1)
+        %        t=clock;
+                %mes=[num2str(t(1)) ';' num2str(t(2)) ';' num2str(t(3)) ';' num2str(t(4)) ';' num2str(t(5)) ';' num2str(t(6)) ';' ];
+        %        mes=[num2str(t(4)) char(9) num2str(t(5)) char(9) num2str(t(6))];
+        %        logline=[mes  char(9) 'Z moved to' char(9)  num2str(src.CurrZ)];
+        %       src.saveLog(logline);
+        %   end
+           src.updateGuiState();
+        end
+        
+        function listen_ZTracked(src,event)
+            if (src.isRecording==1)
                 t=clock;
                 %mes=[num2str(t(1)) ';' num2str(t(2)) ';' num2str(t(3)) ';' num2str(t(4)) ';' num2str(t(5)) ';' num2str(t(6)) ';' ];
                 mes=[num2str(t(4)) char(9) num2str(t(5)) char(9) num2str(t(6))];
-                logline=[mes  char(9) 'Z moved to' char(9)  num2str(src.CurrZ)];
-               src.saveLog(logline);
-           end
-           src.updateGuiState();
+                logline=[mes  char(9) 'Z = ' char(9)  num2str(src.CurrZ)];
+                src.saveLog(logline);
+            end            
         end
     end
 end

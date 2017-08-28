@@ -23,6 +23,7 @@ classdef Tracker_Device < Device
         % ---- GUI 
         slider_Treshold; % gray treshold slider
         toggleButton_above; % toggle level above or not
+        toggleButton_fillHoles; % toggle fill holes or not
         toggleButton_setBoxPos; % wait for click notification to recenter box
         waitForSetBoxPos;
         pushButton_autoRecenterBox;
@@ -31,10 +32,12 @@ classdef Tracker_Device < Device
         toggleButton_setAutoFollowBoxPos;
         editWBox;
         editHBox;
+        liveGraph;
         
         % ---- tracking parameter
         tr_value;       % treshold in gray value
         level_above;    % defines if mask = value above or below treshold?
+        fillHoles;      % fill Holes within mask before tracking?
         Xr0;            %  
         Yr0;            %
         subPixX;        % subpixel resolution for centering
@@ -49,6 +52,7 @@ classdef Tracker_Device < Device
         
         % ---- distant GUI
         hDisplayedRectangle;
+        timeStep;
     end
     
     methods
@@ -74,6 +78,11 @@ classdef Tracker_Device < Device
             self.tr_value=tr;       % treshold value for trakcing
             self.level_above=ab;    % mask = value above or below treshold?
             self.followObject=0;    % auto recenter box over time
+            self.fillHoles=0;       % do not fill image holes by default
+            
+            % Live display of force
+            self.liveGraph=AnimatedGraphTracker([], [], 200, 1, -1, 1, 0, 0, 0, 1, 1, 1, 1.2 );
+            self.timeStep=0;
             
             % Builds GUI of this device
             self.buildGui();        
@@ -88,10 +97,11 @@ classdef Tracker_Device < Device
             % Limits of tracked rectangle
             self.minX=1;
             self.minY=1;
-            self.maxX=640; % default values, udpated by the camera call
+            self.maxX=752; % default values, udpated by the camera call
             self.maxY=480;
-            
             self.waitForSetBoxPos=0;
+            
+            
         end
         
         % ----- [Derived from Device class]
@@ -115,83 +125,100 @@ classdef Tracker_Device < Device
         % ----- [Derived from Device class]
         %    - Builds GUI for Tracker Device
         function buildGui(self)
+                curYPos=10;
                 % Slider to set displayed min gray value
                 self.slider_Treshold=uicontrol('Style', 'slider',...
                           'Min',0,'Max',256,'Value',self.tr_value,...
-                          'Position', [10 10 180 20],...
+                          'Position', [10 curYPos 180 20],...
                           'Callback', {@(src,event)self.sliderTresholdCB(src,event)});
+                
+                curYPos=curYPos+30;
+                % Toggle button to fill holes in tracked image or not
+                self.toggleButton_fillHoles = uicontrol('style','togglebutton',...
+                                                        'position',[10 curYPos 180 20],...
+                                                        'string','FillHoles',...
+                                                        'callback',{@(src,event)self.toggleFillHolesCB(src,event)}); %an edit box      
                       
-                                % Toggle button to measure gray level above
-                                % or under treshold
+                curYPos=curYPos+20;
+                % Toggle button to measure gray level above
+                % or under treshold
                 % toggleButton measure above
                 self.toggleButton_above = uicontrol('style','togglebutton',...
-                                            'position',[10 40 180 20],...
+                                            'position',[10 curYPos 180 20],...
                                            'string','Above',...
                                            'callback',{@(src,event)self.toggleLevelAboveCB(src,event)}); %an edit box
                 % Initialize value
                 set(self.toggleButton_above,'Value',self.level_above);
                 
+                curYPos=curYPos+50;
                 % Label for XPos
                 uicontrol('style','text',...
-                          'position',[10 90 85 20],...
+                          'position',[10 curYPos 85 20],...
                           'string','Pos X (pix)');
                 % XPos
                 self.labelXPos=uicontrol('style','text',...
-                          'position',[10 70 85 20],...
+                          'position',[10 curYPos-20 85 20],...
                           'string','0');
                       
                 % Label for YPos
                 uicontrol('style','text',...
-                          'position',[105 90 90 20],...
+                          'position',[105 curYPos 90 20],...
                           'string','Pos Y (pix)');
                 
                 %YPos
                 self.labelYPos=uicontrol('style','text',...
-                          'position',[105 70 90 20],...
+                          'position',[105 curYPos-20 90 20],...
                           'string','0');
-                      
+                
+                curYPos=curYPos+25;
                 % pushButton recenter box
                 self.pushButton_autoRecenterBox = uicontrol('style','pushbutton',...
-                                            'position',[10 115 180 20],...
+                                            'position',[10 curYPos 180 20],...
                                             'string','Recenter Box',...
                                             'callback',{@(src,event)self.pushButtonAutoRecenterBoxCB(src,event)}); %an edit box
-               
+                curYPos=curYPos+20;
                 % toggleButton setBoxPos
                 self.toggleButton_setBoxPos = uicontrol('style','togglebutton',...
-                                            'position',[10 135 180 20],...
+                                            'position',[10 curYPos 180 20],...
                                            'string','Set Box Position',...
                                            'callback',{@(src,event)self.toggleButtonSetBoxPosCB(src,event)}); %an edit box
                 % Initialize value
                 set(self.toggleButton_setBoxPos,'Value',0);
-           
+                
+                curYPos=curYPos+20;
                 % toggleButton setAutoFollowBoxPos
                 self.toggleButton_setAutoFollowBoxPos = uicontrol('style','togglebutton',...
-                                            'position',[10 155 180 20],...
+                                            'position',[10 curYPos 180 20],...
                                            'string','Follow Object',...
                                            'callback',{@(src,event)self.toggleButtonAutoFollowBoxPosCB(src,event)}); %an edit box
                 % Initialize value
                 set(self.toggleButton_setBoxPos,'Value',0);
                 
+                curYPos=curYPos+40;
                 % Label for WBox
                 uicontrol('style','text',...
-                          'position',[10 195 85 15],...
+                          'position',[10 curYPos 85 15],...
                           'string','Width (pix)');
               
                 % Edit Text Choose Width
                 self.editWBox = uicontrol('style','edit',...
-                                            'position',[10 180 85 15],...
+                                            'position',[10 curYPos-15 85 15],...
                                             'string',num2str(self.endX-self.startX),...
                                             'callback',{@(src,event)self.editWBoxCB(src,event)}); %an edit box
                 % Label for HBox
                 uicontrol('style','text',...
-                          'position',[105 195 90 15],...
+                          'position',[105 curYPos 90 15],...
                           'string','Heigth (pix)');
                 
                 % Edit Text Choose Height
                 self.editHBox = uicontrol('style','edit',...
-                                            'position',[105 180 90 15],...
+                                            'position',[105 curYPos-15 90 15],...
                                             'string',num2str(self.endY-self.startY),...
                                             'callback',{@(src,event)self.editHBoxCB(src,event)}); %an edit box
+                
+                set(0, 'CurrentFigure', self.hDeviceGUI);
+                subplot(1,3,3);
+                self.liveGraph.showGraph();
              
             
         end
@@ -229,6 +256,10 @@ classdef Tracker_Device < Device
              self.setAbove(get(src,'Value'));
         end
         
+        function toggleFillHolesCB(self,src,event)
+             self.setFillHoles(get(src,'Value'));
+        end
+        
         function toggleButtonSetBoxPosCB(self,src,event)
             val=get(src,'Value');
             if (val==1)
@@ -257,6 +288,10 @@ classdef Tracker_Device < Device
         
         function setAbove(self,v)
             self.level_above=v;
+        end
+        
+        function setFillHoles(self,v)
+            self.fillHoles=v;
         end
         
         function setFollow(self,v)
@@ -334,7 +369,8 @@ classdef Tracker_Device < Device
         end
         
         function rect=getDisplayRect(self)
-            rect=[self.startX (self.maxY-self.endY) (self.endX-self.startX) (self.endY-self.startY)];
+            %rect=[self.startX (self.maxY-self.endY) (self.endX-self.startX) (self.endY-self.startY)];
+            rect=[self.startX self.startY (self.endX-self.startX) (self.endY-self.startY)];
         end
         
         % ----- [Derived from Device class]
@@ -357,10 +393,17 @@ classdef Tracker_Device < Device
         
         function showPreview(self)
             set(0, 'CurrentFigure', self.hDeviceGUI);
-            subplot(1,2,2);
-            imshow(flipdim(self.maskImg,1));
-            set(self.labelXPos,'String',num2str(self.xPos-self.subPixX));
-            set(self.labelYPos,'String',num2str(self.yPos-self.subPixY));
+            subplot(1,3,2);
+            %imshow(flipdim(flipdim(self.maskImg,2),1));
+            imshow(self.maskImg);
+            xP=self.xPos-self.subPixX;
+            yP=self.yPos-self.subPixY;
+            set(self.labelXPos,'String',num2str(xP));
+            set(self.labelYPos,'String',num2str(yP));
+            self.timeStep=self.timeStep+1;
+            self.liveGraph.appendNewPt(self.timeStep,xP);
+            subplot(1,3,3);
+            self.liveGraph.updateGraph();
         end
         
         function Track(self,data)
@@ -376,6 +419,12 @@ classdef Tracker_Device < Device
             else
                 self.maskImg=(self.cutImg>=self.tr_value);
             end
+            
+            if (self.fillHoles==0)
+            else
+                self.maskImg=imfill(self.maskImg,'holes');
+            end
+            
             Area=sum(sum(self.maskImg));
             if (Area~=0)
 
