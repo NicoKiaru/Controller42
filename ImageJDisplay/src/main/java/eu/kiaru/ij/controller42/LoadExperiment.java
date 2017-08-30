@@ -6,16 +6,22 @@
  *     http://creativecommons.org/publicdomain/zero/1.0/
  */
 
-package eu.kiaru.ij;
+package eu.kiaru.ij.controller42;
 
 import net.imagej.ImageJ;
 
 import java.io.File;
+import java.io.FilenameFilter;
 
 import org.scijava.command.Command;
+import org.scijava.io.IOService;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.ui.UIService;
+
+import eu.kiaru.ij.controller42.devices.DeviceFactory;
+import ij.IJ;
+import ij.WindowManager;
 
 /**
  * This plugin show a minimal example for using JOGL dependency in an IJ Command.
@@ -36,16 +42,51 @@ public class LoadExperiment implements Command {
     @Parameter
     private UIService uiService;
     
+    @Parameter
+    private IOService ioService;
+    
     @Parameter(label="Select a directory", style="directory") 
     private File myDir;
-    
 
     @Override
     public void run() {
-        // uiService.show("Running MinJOGLIJCommand");
-        // Creates a new JOGL window
-        // uiService.show("A new JOGL window has appeared. It should change color randomly upon image resizing. Try it!");
-        uiService.show(myDir.getAbsolutePath());
+        
+        uiService.show("Directory : "+myDir.getAbsolutePath());
+        File[] files = myDir.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.toLowerCase().endsWith(".log");
+            }
+        });
+        
+        DSDevicesSynchronizer synchronizer= new DSDevicesSynchronizer();
+        
+        for (File f:files) {
+        	//uiService.show("File : "+f.getAbsolutePath());
+        	DefaultSynchronizedDisplayedDevice device = DeviceFactory.getDevice(f);
+        	if (device!=null) {
+        		synchronizer.addDevice(device);
+        	}        	
+        }   
+        /*uiService.show("My image", );*/
+        
+        /*String path = "C:\\Users\\Nico\\Desktop\\typethealphabet.png";
+        
+        //ij.ImageJ ij;
+        IJ.open(path);
+        WindowManager.getActiveWindow();*/
+        /*IJ.
+        Dataset dataset;
+		try {
+			dataset = (Dataset) ioService.open(path);
+	        uiService.show(dataset);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+
+        // show the image
+        
+        
         
         
     }
@@ -60,9 +101,14 @@ public class LoadExperiment implements Command {
      */
     public static void main(final String... args) throws Exception {
         // create the ImageJ application context with all available services
-        final ImageJ ij = new ImageJ();
-        ij.ui().showUI();
-        ij.command().run(LoadExperiment.class, true);
+
+        ij.ImageJ ij1;
+        ij1 = new ij.ImageJ(null, ij.ImageJ.STANDALONE);
+    	
+    	final ImageJ ij2 = new ImageJ();
+        ij2.ui().showUI();
+        ij2.command().run(LoadExperiment.class, true);        
+        
     }
 
 }
