@@ -11,7 +11,7 @@ public class CamTrackerDevice extends Controller42Device {
 	int currentSampleNumber;
 	int currentSampleDisplayed;
 	float[][] posData;
-	LiveLineChartIJ1 plotChartX;
+	LiveLineChartIJ1 plotChartX,plotChartY;
 	
 	@Override
 	void init42Device() {
@@ -43,10 +43,14 @@ public class CamTrackerDevice extends Controller42Device {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		plotChartX = new LiveLineChartIJ1(this.getName(),
+		plotChartX = new LiveLineChartIJ1(this.getName()+"_XR",
 				"Time","PositionX",posData[0],posData[1]);
 
 		plotChartX.plot.show();
+		plotChartY = new LiveLineChartIJ1(this.getName()+"_YR",
+				"Time","PositionY",posData[0],posData[2]);
+
+		plotChartY.plot.show();
 		this.isDisplayed=true;		
 	}
 
@@ -63,8 +67,7 @@ public class CamTrackerDevice extends Controller42Device {
 	}
 
 	@Override
-	public void setDisplayedTime(LocalDateTime time) {
-		
+	public void setDisplayedTime(LocalDateTime time) {		
 		// TODO Auto-generated method stub
 		Duration timeInterval = Duration.between(linkedCam.dateAcquisitionStarted,time);//.dividedBy(numberOfImages-1).toNanos()
 		double timeIntervalInMs = (timeInterval.getSeconds()*1000+timeInterval.getNano()/1e6);
@@ -81,6 +84,9 @@ public class CamTrackerDevice extends Controller42Device {
 			double[] range = plotChartX.plot.getLimits(); // xmin xmax ymin ymax
 			double width = range[1]-range[0];
 			plotChartX.plot.setLimits(newSampledDisplayed-1-width/2.0, newSampledDisplayed-1+width/2.0, range[2], range[3]);
+			range = plotChartY.plot.getLimits(); // xmin xmax ymin ymax
+			width = range[1]-range[0];
+			plotChartY.plot.setLimits(newSampledDisplayed-1-width/2.0, newSampledDisplayed-1+width/2.0, range[2], range[3]);
 		}
 
 	}

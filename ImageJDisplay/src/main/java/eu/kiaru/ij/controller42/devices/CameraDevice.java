@@ -2,6 +2,7 @@ package eu.kiaru.ij.controller42.devices;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -152,6 +153,9 @@ public class CameraDevice extends Controller42Device implements ImageListener{
 	@Override
 	public void imageClosed(ImagePlus src) {
 		// TODO Auto-generated method stub
+		if (src.getTitle().equals(this.getName())) {
+			((CustomWFVirtualStack) myImpPlus.getStack()).closeFiles();
+		}
 		
 	}
 
