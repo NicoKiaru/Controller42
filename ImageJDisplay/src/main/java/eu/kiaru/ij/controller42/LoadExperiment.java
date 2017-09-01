@@ -49,8 +49,7 @@ public class LoadExperiment implements Command {
     private File myDir;
 
     @Override
-    public void run() {
-        
+    public void run() {        
         uiService.show("Directory : "+myDir.getAbsolutePath());
         File[] files = myDir.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
@@ -67,6 +66,8 @@ public class LoadExperiment implements Command {
         		synchronizer.addDevice(device);
         	}        	
         }   
+
+    	DeviceFactory.linkDevices(synchronizer.getDevices());
         /*uiService.show("My image", );*/
         
         /*String path = "C:\\Users\\Nico\\Desktop\\typethealphabet.png";

@@ -1,12 +1,12 @@
 package eu.kiaru.ij.controller42;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 abstract public class DefaultSynchronizedDisplayedDevice implements SynchronizableDevice, DisplayableDevice{
-	private Date currentTime;
-	boolean isDisplayed = false;
+	private LocalDateTime currentTime;
+	public boolean isDisplayed = false;
 	boolean isSynchronized = true;
 	private String name;
 	private Set<DeviceListener> listeners;
@@ -14,17 +14,17 @@ abstract public class DefaultSynchronizedDisplayedDevice implements Synchronizab
 	
 	public DefaultSynchronizedDisplayedDevice() {
 		listeners = new HashSet<>();
-		this.initDisplay();
+		//this.initDisplay();
 	}
 	
 	@Override
-	public synchronized Date getCurrentTime() {
+	public synchronized LocalDateTime getCurrentTime() {
 		// TODO Auto-generated method stub
 		return currentTime;
 	}
 
 	@Override
-	public synchronized void setCurrentTime(Date date) {
+	public synchronized void setCurrentTime(LocalDateTime date) {
 		// TODO Auto-generated method stub
 		currentTime=date;
 		if (isDisplayed) {
@@ -32,7 +32,7 @@ abstract public class DefaultSynchronizedDisplayedDevice implements Synchronizab
 		}
 	}
 
-	@Override
+	/*@Override
 	public void initDisplay() {
 		// TODO Auto-generated method stub
 		isDisplayed = true;
@@ -44,12 +44,12 @@ abstract public class DefaultSynchronizedDisplayedDevice implements Synchronizab
 		// TODO Auto-generated method stub
 		isDisplayed = false;
 		removeDisplay();
-	}
+	}*/
 	
 	abstract protected void removeDisplay();
 	abstract protected void showDisplay();
 	@Override
-	abstract public void setDisplayedTime(Date time);
+	abstract public void setDisplayedTime(LocalDateTime time);
 	
 	public synchronized void addDeviceListener(DeviceListener listener) {
 		listeners.add(listener);
@@ -59,11 +59,19 @@ abstract public class DefaultSynchronizedDisplayedDevice implements Synchronizab
 		listeners.remove(listener);
 	}
 	
-	protected synchronized void deviceTimeChangedEvent() {
+	protected synchronized void fireDeviceTimeChangedEvent() {
 		DeviceEvent e = new DeviceEvent(this);
 		for (DeviceListener listener : listeners) {
 			listener.deviceTimeChanged(e);
 		}
+	}
+	
+	public void setName(String name) {
+		this.name=name;
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 

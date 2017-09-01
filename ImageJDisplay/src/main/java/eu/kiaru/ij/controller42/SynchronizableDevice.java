@@ -1,9 +1,9 @@
 package eu.kiaru.ij.controller42;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public interface SynchronizableDevice {
-		Date getCurrentTime();
-		void setCurrentTime(Date date);		
+		LocalDateTime getCurrentTime();
+		void setCurrentTime(LocalDateTime date);		
 
 }

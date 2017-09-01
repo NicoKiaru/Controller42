@@ -1,9 +1,9 @@
 package eu.kiaru.ij.controller42;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public interface DisplayableDevice {
 	void initDisplay();
 	void closeDisplay();
-	void setDisplayedTime(Date time);
+	void setDisplayedTime(LocalDateTime time);
 }
