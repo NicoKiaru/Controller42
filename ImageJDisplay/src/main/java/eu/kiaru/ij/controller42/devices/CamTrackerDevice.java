@@ -4,10 +4,15 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
+import ij.ImagePlus;
 
 public class CamTrackerDevice extends Controller42Device {
 	
 	CameraDevice linkedCam;
+	public String linkedCamName;
 	int currentSampleNumber;
 	int currentSampleDisplayed;
 	float[][] posData;
@@ -15,11 +20,31 @@ public class CamTrackerDevice extends Controller42Device {
 	
 	@Override
 	void init42Device() {
-		// TODO Auto-generated method stub
-		
+		// logFile and date of file created already done
+				BufferedReader reader;
+				try {
+					reader = new BufferedReader(new FileReader(this.logFile.getAbsolutePath()));
+					
+				    // Skips header
+				    for (int i=0;i<4;i++) {
+				    	reader.readLine();
+				    }
+				    int imgSX=-1;
+				    int imgSY=-1;
+				    String line = reader.readLine(); // image size X
+				    if (line.startsWith("Linked To =")) {
+				    	linkedCamName = line.substring("Linked To =".length()).trim();
+				    }
+			      	reader.close();
+			      	
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 	}
 
 	void setLinkedCamera(CameraDevice cam) {
+		System.out.println("SetLinkedCamCalled");
 		// logFile and date of file created already done
 		BufferedReader reader;
 		linkedCam = cam;
@@ -43,27 +68,7 @@ public class CamTrackerDevice extends Controller42Device {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		plotChartX = new LiveLineChartIJ1(this.getName()+"_XR",
-				"Time","PositionX",posData[0],posData[1]);
-
-		plotChartX.plot.show();
-		plotChartY = new LiveLineChartIJ1(this.getName()+"_YR",
-				"Time","PositionY",posData[0],posData[2]);
-
-		plotChartY.plot.show();
-		this.isDisplayed=true;		
-	}
-
-	@Override
-	protected void removeDisplay() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected void showDisplay() {
-		// TODO Auto-generated method stub
-
+		//this.showDisplay();
 	}
 
 	@Override
@@ -89,6 +94,40 @@ public class CamTrackerDevice extends Controller42Device {
 			plotChartY.plot.setLimits(newSampledDisplayed-1-width/2.0, newSampledDisplayed-1+width/2.0, range[2], range[3]);
 		}
 
+	}
+
+	@Override
+	protected void makeDisplayVisible() {
+		// TODO Auto-generated method stub
+		plotChartY.plot.show();	
+		plotChartX.plot.show();
+		
+	}
+
+	@Override
+	public void initDisplay() {
+		System.out.println("initDisplay called in the camtracker");
+		// TODO Auto-generated method stub
+		plotChartX = new LiveLineChartIJ1(this.getName()+"_XR",
+				"Time","PositionX",posData[0],posData[1]);
+		
+		System.out.println("posData[0].length="+posData[0].length);
+		
+		plotChartY = new LiveLineChartIJ1(this.getName()+"_YR",
+				"Time","PositionY",posData[0],posData[2]);
+	}
+
+	@Override
+	public void closeDisplay() {
+		// TODO Auto-generated method stub
+		plotChartY.plot.getImagePlus().close();	
+		plotChartX.plot.getImagePlus().close();		
+	}
+
+	@Override
+	protected void makeDisplayInvisible() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

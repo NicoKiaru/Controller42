@@ -39,11 +39,12 @@ public class CameraDevice extends Controller42Device implements ImageListener{
 	int numberOfImages;
 	
 	@Override
-	protected void removeDisplay() {		
+	public void makeDisplayVisible() {
+		myImpPlus.show();
 	}
 
 	@Override
-	protected void showDisplay() {		
+	public void makeDisplayInvisible() {		
 	}	
 
 	@Override
@@ -68,8 +69,11 @@ public class CameraDevice extends Controller42Device implements ImageListener{
 		}
 	}
 	
+	CustomWFVirtualStack myVirtualStack;
 	@Override
 	void init42Device() {
+		// TODO Auto-generated method stub
+		System.out.println("alors ? -0");
 		// logFile and date of file created already done
 		BufferedReader reader;
 		try {
@@ -112,16 +116,15 @@ public class CameraDevice extends Controller42Device implements ImageListener{
 		        numberOfImages++;
 		    }
 		    //DateFormat format = new SimpleDateFormat("'1\t'HH'\t'mm'\t'ss.SSSS", Locale.FRANCE);
-		    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("'1\t'HH'\t'mm'\t'ss.SSSS");
-		    LocalTime timeIni = LocalTime.parse(firstLine,formatter);		   	
+		    //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("'1\t'HH'\t'mm'\t'ss.SSSS");
+		    LocalTime timeIni = Controller42Device.fromCameraLogLine(firstLine);//.LocalTime.parse(firstLine,formatter);		   	
 		    
 		    
 		    LocalTime timeEnd = null;
 		   	avgTimeBetweenImagesInMs = 1;
 		   	if (!lastLine.equals("")) {
-		   		lastLine = lastLine.substring(lastLine.indexOf('\t')+1);
-		   		formatter = DateTimeFormatter.ofPattern("HH'\t'mm'\t'ss.SSSS");
-			   	timeEnd = LocalTime.parse(lastLine,formatter);
+		   		//formatter = DateTimeFormatter.ofPattern("HH'\t'mm'\t'ss.SSSS");
+			   	timeEnd = Controller42Device.fromCameraLogLine(lastLine);
 			   	avgTimeBetweenImagesInMs = Duration.between(timeIni,timeEnd).dividedBy(numberOfImages-1).toNanos()/1e6;
 			   	if (avgTimeBetweenImagesInMs<0) {
 			   		System.err.println("Negative time between images... Are you acquiring overnight ?");
@@ -138,16 +141,13 @@ public class CameraDevice extends Controller42Device implements ImageListener{
 	      	// now Fetch data and open them
 	      	String attachedRawDataPrefixFile = this.logFile.getPath().substring(0, this.logFile.getPath().length()-4);
 
-	      	CustomWFVirtualStack myVirtualStack = new CustomWFVirtualStack(imgSX, imgSY, numberOfImages, null, null);
+	      	myVirtualStack = new CustomWFVirtualStack(imgSX, imgSY, numberOfImages, null, null);
 	      	myVirtualStack.setAttachedDataPath(attachedRawDataPrefixFile);
-			myImpPlus = new ImagePlus(this.getName(), myVirtualStack);
-			myImpPlus.show();
-			myImpPlus.addImageListener(this);
 	      	
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}	    
+		}
 	}
 
 	@Override
@@ -156,12 +156,6 @@ public class CameraDevice extends Controller42Device implements ImageListener{
 		if (src.getTitle().equals(this.getName())) {
 			((CustomWFVirtualStack) myImpPlus.getStack()).closeFiles();
 		}
-		
-	}
-
-	@Override
-	public void imageOpened(ImagePlus src) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -182,5 +176,24 @@ public class CameraDevice extends Controller42Device implements ImageListener{
 				this.fireDeviceTimeChangedEvent();
 			}
 		}
+	}
+
+	@Override
+	public void initDisplay() {
+		myImpPlus = new ImagePlus(this.getName(), myVirtualStack);
+		myImpPlus.addImageListener(this);
+	}
+
+	@Override
+	public void closeDisplay() {
+		// TODO Auto-generated method stub
+		myImpPlus.close();
+	}
+	
+	// Useless
+	@Override
+	public void imageOpened(ImagePlus src) {
+		// TODO Auto-generated method stub
+		
 	}
 }

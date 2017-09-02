@@ -1,20 +1,32 @@
 package eu.kiaru.ij.controller42;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAmount;
 import java.util.HashSet;
 import java.util.Set;
 
 abstract public class DefaultSynchronizedDisplayedDevice implements SynchronizableDevice, DisplayableDevice{
 	private LocalDateTime currentTime;
-	public boolean isDisplayed = false;
+	boolean isDisplayed = false;
 	boolean isSynchronized = true;
 	private String name;
-	private Set<DeviceListener> listeners;
+	private Set<DeviceListener> listeners = new HashSet<>();
+	private Duration displayedTimeShift = Duration.ZERO;
+	boolean firstShowDisplayCall=true;
 	
 	
 	public DefaultSynchronizedDisplayedDevice() {
-		listeners = new HashSet<>();
 		//this.initDisplay();
+	}
+	
+	public void setDisplayedTimeShift(Duration shift) {
+		displayedTimeShift=shift;
+		updateDisplay();
+	}
+	
+	public Duration getDisplayedTimeShift() {
+		return displayedTimeShift;
 	}
 	
 	@Override
@@ -27,27 +39,62 @@ abstract public class DefaultSynchronizedDisplayedDevice implements Synchronizab
 	public synchronized void setCurrentTime(LocalDateTime date) {
 		// TODO Auto-generated method stub
 		currentTime=date;
-		if (isDisplayed) {
-			this.setDisplayedTime(currentTime);
+		updateDisplay();
+		
+	}
+	
+	private void updateDisplay() {
+		if (isDisplayed) {			
+			this.setDisplayedTime(currentTime.plus(displayedTimeShift));
 		}
 	}
-
-	/*@Override
-	public void initDisplay() {
+	
+	public final void showDisplay() {
 		// TODO Auto-generated method stub
+		if (this.firstShowDisplayCall) {
+			this.initDisplay();
+			firstShowDisplayCall=false;
+		}
 		isDisplayed = true;
-		showDisplay();
+		makeDisplayVisible();
+	}
+	
+	public final void killDisplay() {
+		isDisplayed=false;
+		firstShowDisplayCall=true;
+		closeDisplay();
+	}
+	
+	abstract protected void makeDisplayVisible();
+	abstract public void initDisplay();
+	abstract public void closeDisplay();
+	
+	public boolean isDisplayed() {
+		return isDisplayed;
+	}
+	
+	public boolean isSynchronized() {
+		return isSynchronized;
+	}
+	
+	public void enableSynchronization() {
+		isSynchronized=true;
+	}
+	
+	public void disableSynchronization() {
+		isSynchronized=false;
 	}	
 	
 	@Override
-	public void closeDisplay() {
+	public final void hideDisplay() {
 		// TODO Auto-generated method stub
 		isDisplayed = false;
-		removeDisplay();
-	}*/
+		makeDisplayInvisible();
+	}
 	
-	abstract protected void removeDisplay();
-	abstract protected void showDisplay();
+	abstract protected void makeDisplayInvisible();
+	
+	
 	@Override
 	abstract public void setDisplayedTime(LocalDateTime time);
 	

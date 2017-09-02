@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Date;
@@ -98,34 +99,97 @@ abstract public class Controller42Device extends DefaultSynchronizedDisplayedDev
 						   	  System.out.println("\t Log File created on "+strDate);
 						   	  //DateFormat format = new SimpleDateFormat("yy-MM-dd 'at' HH'h'mm'm'ss.SSS's'", Locale.FRANCE);
 						   	  //Date date = format.parse(strDate);
-
-						   	  DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd 'at' HH'h'mm'm'ss.SSS's'");
-						   	  ans.dateOfFileCreated=LocalDateTime.parse(strDate,formatter);
-						   	  		   	  
+						   	  // !!! Stupid date formatting
+						   	  //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd 'at' HH'h'mm'm'ss.SSS's'");
+						   	  
+						   	  
+						   	  ans.dateOfFileCreated=fromLogFileLine(strDate);//LocalDateTime.parse(strDate,formatter);		   	  		   	  
 					      }
+
 				    	  ans.init42Device();
+
 				      }	
 		    reader.close();
 		    return ans;
 		}
 		catch (Exception e)
 		{
+			e.printStackTrace();
 		    return null;
 		}
 	}
 	
-	@Override
-	public void initDisplay() {
-		// TODO Auto-generated method stub
-		//isDisplayed = true;
-		//showDisplay();
-	}	
-	
-	@Override
-	public void closeDisplay() {
-		// TODO Auto-generated method stub
-		//isDisplayed = false;
-		//removeDisplay();
+	// Because I was stupid in Matlab
+	static public LocalDateTime fromLogFileLine(String str) {
+		//17-08-25 at 11h13m21.101s
+		//16-11-16 at 15h57m3.442s
+		//String[] parts = str.split("(\\d+)-(\\d+)-(\\d+)");
+	   	//System.out.println(str);
+		// HORRIBLE !!!
+		//int currentIndex=0;
+		int nextIndex = str.indexOf("-");		
+		String year = str.substring(0, nextIndex);
+		str=str.substring(nextIndex+1, str.length());
+		
+		nextIndex = str.indexOf("-");
+		String month = str.substring(0, nextIndex);
+		str=str.substring(nextIndex+1, str.length());
+		
+		nextIndex = str.indexOf(" ");
+		String day = str.substring(0, nextIndex);
+		str=str.substring(nextIndex+4, str.length());
+		
+		nextIndex = str.indexOf("h");
+		String hour = str.substring(0, nextIndex);
+		str=str.substring(nextIndex+1, str.length());
+		
+		nextIndex = str.indexOf("m");
+		String minute = str.substring(0, nextIndex);
+		str=str.substring(nextIndex+1, str.length());
+		
+		nextIndex = str.indexOf("s");
+		String second = str.substring(0, nextIndex);
+		str=str.substring(nextIndex+1, str.length());
+		
+		int y = Integer.parseInt(year);
+		int M = Integer.parseInt(month);
+		int d = Integer.parseInt(day);
+		
+		int h = Integer.parseInt(hour);
+		int m = Integer.parseInt(minute);
+		double ds = Double.parseDouble(second);
+		int s =(int)ds;
+		ds=ds-(int)ds;
+		int ns = (int)(ds*1e9);
+		return LocalDateTime.of(y,M,d,h,m,s,ns);
 	}
+	
+	
+	static public LocalTime fromCameraLogLine(String str) {
+
+		str = str.substring(str.indexOf('\t')+1);
+		//System.out.println("fromCameraLogLine"+str);
+		int nextIndex = str.indexOf("\t");
+		String hour = str.substring(0, nextIndex);
+		str=str.substring(nextIndex+1, str.length());
+		
+		nextIndex = str.indexOf("\t");
+		String minute = str.substring(0, nextIndex);
+		str=str.substring(nextIndex+1, str.length());
+		
+		String second = str.substring(0, nextIndex);
+		str=str.substring(nextIndex+1, str.length());
+		
+		int h = Integer.parseInt(hour);
+		int m = Integer.parseInt(minute);
+		double ds = Double.parseDouble(second);
+		int s =(int)ds;
+		ds=ds-(int)ds;
+		int ns = (int)(ds*1e9);
+		
+		return LocalTime.of(h, m, s, ns);
+	}
+	
+	
 	
 }

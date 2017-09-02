@@ -68,6 +68,9 @@ public class LoadExperiment implements Command {
         }   
 
     	DeviceFactory.linkDevices(synchronizer.getDevices());
+    	for (DefaultSynchronizedDisplayedDevice device:synchronizer.getDevices().values()) {
+    		device.showDisplay();
+    	}
         /*uiService.show("My image", );*/
         
         /*String path = "C:\\Users\\Nico\\Desktop\\typethealphabet.png";

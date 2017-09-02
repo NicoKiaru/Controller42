@@ -16,8 +16,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
 public class CustomWFVirtualStack extends VirtualStack implements PlugIn {
-	int WIDTH; //= 512;
-	int HEIGHT; //= 512;
+	final int WIDTH; //= 512;
+	final int HEIGHT; //= 512;
 	//final int SIZE; = 100;*/
 
 	
@@ -40,10 +40,6 @@ public class CustomWFVirtualStack extends VirtualStack implements PlugIn {
 		ImagePlus imp = new ImagePlus("Empty Virtual Stack", stack);
 		imp.show();
 	}
-
-	public CustomWFVirtualStack() {
-	}
-
 	
 	public CustomWFVirtualStack(int width, int height, int nSlices, ColorModel cm, String path) {
 		super(width, height, cm, path);
@@ -129,11 +125,11 @@ public class CustomWFVirtualStack extends VirtualStack implements PlugIn {
 		
 		try {
 			long position = (imgNumber-indexOfStartingImageInFile.get(currentFileIndex))*WIDTH*HEIGHT;
-			//currentChannel.position(position);
+			//System.out.println("position="+position);
 			ByteBuffer copy = ByteBuffer.allocate(WIDTH*HEIGHT*2);
 			currentChannel.position(position);
-			System.out.println(currentChannel.read(copy)+" bytes read");
-			System.out.println("posiiton="+copy.position());
+		    currentChannel.read(copy);//+" bytes read");
+			//System.out.println("posiiton="+copy.position());
 			copy.flip();
 			//System.out.println(copy.getShort());
 			copy.get(myBytes);
@@ -157,12 +153,20 @@ public class CustomWFVirtualStack extends VirtualStack implements PlugIn {
 		}
 	}
 	
+	float avgBG;
+	
 	public void setAttachedDataPath(String path) {
       	attachedRawDataPrefixFile=path;
       	initData();
       	// also initializes the background
 		bgPixels = new byte[WIDTH*HEIGHT];
 		getBytesOfImg(0,bgPixels);
+		long pixSum=0;
+		for (int i=0;i<WIDTH*HEIGHT;i++) {
+			pixSum+=(bgPixels[i]&0xff);
+		}
+		avgBG = (float)((double)pixSum/(double)(WIDTH*HEIGHT));
+		System.out.println("avgBG="+avgBG);
 	}
 	
 	ArrayList<Integer> indexOfStartingImageInFile;
@@ -198,11 +202,11 @@ public class CustomWFVirtualStack extends VirtualStack implements PlugIn {
 	public ImageProcessor getProcessor(int n) {		
 		byte[] rawData = new byte[WIDTH*HEIGHT];
 		getBytesOfImg(n,rawData);
-		float offset = (float)(255.0/2.0);  //includes 0.5 for rounding when converting float to byte
+		  //includes 0.5 for rounding when converting float to byte
 		//See https://github.com/imagej/imagej1/blob/master/ij/plugin/filter/BackgroundSubtracter.java		
 		for (int p=0; p<bgPixels.length; p++) {
 			 //float value = (rawData[p]&0xff) - (bgPixels[p]&0xff) + offset;
-			float value = (rawData[p]&0xff) - (bgPixels[p]&0xff) + offset;
+			float value = (rawData[p]&0xff) - (bgPixels[p]&0xff) + avgBG;
             if (value<0f) value = 0f;
 
             if (value>255f) value = 255f;

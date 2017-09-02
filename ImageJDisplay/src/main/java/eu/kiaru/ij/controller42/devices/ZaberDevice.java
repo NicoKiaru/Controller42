@@ -7,13 +7,6 @@ import ij.IJ;
 
 public class ZaberDevice extends Controller42Device {
 
-	@Override
-	protected void removeDisplay() {		
-	}
-
-	@Override
-	protected void showDisplay() {
-	}
 
 	@Override
 	void init42Device() {
@@ -23,6 +16,30 @@ public class ZaberDevice extends Controller42Device {
 
 	@Override
 	public void setDisplayedTime(LocalDateTime time) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void makeDisplayVisible() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void initDisplay() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void closeDisplay() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void makeDisplayInvisible() {
 		// TODO Auto-generated method stub
 		
 	}

@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 public interface DisplayableDevice {
 	void initDisplay();
-	void closeDisplay();
+	void showDisplay();
+	void hideDisplay();
+	void killDisplay();
 	void setDisplayedTime(LocalDateTime time);
 }
