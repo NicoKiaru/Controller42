@@ -7,6 +7,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import eu.kiaru.ij.controller42.structDevice.DefaultSynchronizedDisplayedDevice;
+import eu.kiaru.ij.controller42.structDevice.DeviceEvent;
+import eu.kiaru.ij.controller42.structDevice.DeviceListener;
+
 public class DSDevicesSynchronizer implements DeviceListener{
 	
 	private Set<DefaultSynchronizedDisplayedDevice> devices;
@@ -41,7 +45,7 @@ public class DSDevicesSynchronizer implements DeviceListener{
 		//System.out.println("Device "+e.getSource()+" has changed its time.");
 		LocalDateTime broadcastedDate = e.getSource().getCurrentTime();		
 		for (DefaultSynchronizedDisplayedDevice device : devices) {
-			if ((device.isSynchronized)&&(!device.equals(e.getSource()))) {
+			if ((device.isSynchronized())&&(!device.equals(e.getSource()))) {
 				device.setCurrentTime(broadcastedDate);
 			}
 		}		

@@ -1,4 +1,4 @@
-package eu.kiaru.ij.controller42;
+package eu.kiaru.ij.controller42.structDevice;
 
 public class DeviceEvent {
 	private DefaultSynchronizedDisplayedDevice source;

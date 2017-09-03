@@ -19,7 +19,8 @@ import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.ui.UIService;
 
-import eu.kiaru.ij.controller42.devices.DeviceFactory;
+import eu.kiaru.ij.controller42.devices42.Device42Factory;
+import eu.kiaru.ij.controller42.structDevice.DefaultSynchronizedDisplayedDevice;
 import ij.IJ;
 import ij.WindowManager;
 
@@ -61,13 +62,13 @@ public class LoadExperiment implements Command {
         
         for (File f:files) {
         	//uiService.show("File : "+f.getAbsolutePath());
-        	DefaultSynchronizedDisplayedDevice device = DeviceFactory.getDevice(f);
+        	DefaultSynchronizedDisplayedDevice device = Device42Factory.getDevice(f);
         	if (device!=null) {
         		synchronizer.addDevice(device);
         	}        	
         }   
 
-    	DeviceFactory.linkDevices(synchronizer.getDevices());
+    	Device42Factory.linkDevices(synchronizer.getDevices());
     	for (DefaultSynchronizedDisplayedDevice device:synchronizer.getDevices().values()) {
     		device.showDisplay();
     	}

@@ -1,4 +1,4 @@
-package eu.kiaru.ij.controller42.devices;
+package eu.kiaru.ij.controller42.devices42;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -8,11 +8,12 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-import ij.*;
+import eu.kiaru.ij.controller42.structDevice.DefaultSynchronizedDisplayedDevice;
+import ij.ImageListener;
+import ij.ImagePlus;
 
-import eu.kiaru.ij.controller42.DefaultSynchronizedDisplayedDevice;
 
-public class CameraDevice extends Controller42Device implements ImageListener{
+public class CameraDevice42 extends DefaultDevice42 implements ImageListener{
 	/* Typical Header:
 	 * ============
 	 * TYPE = Camera
@@ -35,7 +36,7 @@ public class CameraDevice extends Controller42Device implements ImageListener{
 	ImagePlus myImpPlus;
 	private int currentImageDisplayed;
 	public double avgTimeBetweenImagesInMs;
-	LocalDateTime dateAcquisitionStarted;
+	//LocalDateTime dateAcquisitionStarted;
 	int numberOfImages;
 	
 	@Override
@@ -50,7 +51,7 @@ public class CameraDevice extends Controller42Device implements ImageListener{
 	@Override
 	public void setDisplayedTime(LocalDateTime time) {
 		// Needs to find the correct image number
-		Duration timeInterval = Duration.between(dateAcquisitionStarted,time);//.dividedBy(numberOfImages-1).toNanos()
+		Duration timeInterval = Duration.between(this.startAcquisitionTime,time);//.dividedBy(numberOfImages-1).toNanos()
 		double timeIntervalInMs = (timeInterval.getSeconds()*1000+timeInterval.getNano()/1e6);
 		int newImgDisplayed = (int) (timeIntervalInMs/avgTimeBetweenImagesInMs);
 		newImgDisplayed+=1;// because of IJ1 notation style
@@ -69,18 +70,15 @@ public class CameraDevice extends Controller42Device implements ImageListener{
 		}
 	}
 	
-	CustomWFVirtualStack myVirtualStack;
+	CustomWFVirtualStack42 myVirtualStack;
 	@Override
-	void init42Device() {
-		// TODO Auto-generated method stub
-		System.out.println("alors ? -0");
+	public void initDevice() {
 		// logFile and date of file created already done
 		BufferedReader reader;
 		try {
 			reader = new BufferedReader(new FileReader(this.logFile.getAbsolutePath()));
-			
 		    // Skips header
-		    for (int i=0;i<6;i++) {
+		    for (int i=0;i<5;i++) {
 		    	reader.readLine();
 		    }
 		    int imgSX=-1;
@@ -97,7 +95,7 @@ public class CameraDevice extends Controller42Device implements ImageListener{
 		    	reader.readLine();
 		    }
 		    
-		    System.out.println(imgSX+":"+imgSY);
+		    //System.out.println(imgSX+":"+imgSY);
 		    
 		    String firstLine=reader.readLine();
 		    if (firstLine==null) {
@@ -105,7 +103,7 @@ public class CameraDevice extends Controller42Device implements ImageListener{
 		    	reader.close();
 		    	return;
 		    }
-		    System.out.println(firstLine);
+		    //System.out.println(firstLine);
 		    String lastLine = "";
 		    String sCurrentLine;
 		    numberOfImages=1;
@@ -115,33 +113,30 @@ public class CameraDevice extends Controller42Device implements ImageListener{
 		        lastLine = sCurrentLine;
 		        numberOfImages++;
 		    }
+		    //System.out.println(numberOfImages);
 		    //DateFormat format = new SimpleDateFormat("'1\t'HH'\t'mm'\t'ss.SSSS", Locale.FRANCE);
 		    //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("'1\t'HH'\t'mm'\t'ss.SSSS");
-		    LocalTime timeIni = Controller42Device.fromCameraLogLine(firstLine);//.LocalTime.parse(firstLine,formatter);		   	
-		    
-		    
+		    LocalTime timeIni = Device42Helper.fromCameraLogLine(firstLine);//.LocalTime.parse(firstLine,formatter);			    
 		    LocalTime timeEnd = null;
 		   	avgTimeBetweenImagesInMs = 1;
 		   	if (!lastLine.equals("")) {
 		   		//formatter = DateTimeFormatter.ofPattern("HH'\t'mm'\t'ss.SSSS");
-			   	timeEnd = Controller42Device.fromCameraLogLine(lastLine);
+			   	timeEnd = Device42Helper.fromCameraLogLine(lastLine);
 			   	avgTimeBetweenImagesInMs = Duration.between(timeIni,timeEnd).dividedBy(numberOfImages-1).toNanos()/1e6;
 			   	if (avgTimeBetweenImagesInMs<0) {
 			   		System.err.println("Negative time between images... Are you acquiring overnight ?");
 			   		reader.close();
 			   		return; // I hope there's no overnight acquisition
 			   	}
-		   	} 
-		   	dateAcquisitionStarted=LocalDateTime.of(this.dateOfFileCreated.toLocalDate(),timeIni);
-	      	reader.close();
-	      	
-	      	System.out.println("dateAcquisitionStarted="+dateAcquisitionStarted);
-	      	System.out.println("avgTimeBetweenImagesInMs="+avgTimeBetweenImagesInMs);
+		   	}
+		   	startAcquisitionTime=LocalDateTime.of(this.startAcquisitionTime.toLocalDate(),timeIni);
+	      	endAcquisitionTime=this.startAcquisitionTime.plus(Duration.between(timeIni, timeEnd)).plusNanos((long)(avgTimeBetweenImagesInMs*1e6));
+		   	reader.close();
 	      	
 	      	// now Fetch data and open them
 	      	String attachedRawDataPrefixFile = this.logFile.getPath().substring(0, this.logFile.getPath().length()-4);
 
-	      	myVirtualStack = new CustomWFVirtualStack(imgSX, imgSY, numberOfImages, null, null);
+	      	myVirtualStack = new CustomWFVirtualStack42(imgSX, imgSY, numberOfImages, null, null);
 	      	myVirtualStack.setAttachedDataPath(attachedRawDataPrefixFile);
 	      	
 		} catch (Exception e) {
@@ -154,7 +149,7 @@ public class CameraDevice extends Controller42Device implements ImageListener{
 	public void imageClosed(ImagePlus src) {
 		// TODO Auto-generated method stub
 		if (src.getTitle().equals(this.getName())) {
-			((CustomWFVirtualStack) myImpPlus.getStack()).closeFiles();
+			((CustomWFVirtualStack42) myImpPlus.getStack()).closeFiles();
 		}
 		
 	}
@@ -171,7 +166,7 @@ public class CameraDevice extends Controller42Device implements ImageListener{
 			} else {
 				// Needs to compute the Instant on which this image was Acquired
 				double durationInNS = avgTimeBetweenImagesInMs*(newDisplayedSlice-1)*1e6+avgTimeBetweenImagesInMs/2.0;
-				this.setCurrentTime(this.dateAcquisitionStarted.plusNanos((long)durationInNS));			
+				this.setCurrentTime(this.startAcquisitionTime.plusNanos((long)durationInNS));			
 				this.currentImageDisplayed=newDisplayedSlice;
 				this.fireDeviceTimeChangedEvent();
 			}
@@ -196,4 +191,5 @@ public class CameraDevice extends Controller42Device implements ImageListener{
 		// TODO Auto-generated method stub
 		
 	}
+
 }

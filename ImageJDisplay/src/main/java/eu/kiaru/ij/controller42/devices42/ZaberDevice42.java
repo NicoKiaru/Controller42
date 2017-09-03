@@ -1,18 +1,9 @@
-package eu.kiaru.ij.controller42.devices;
+package eu.kiaru.ij.controller42.devices42;
 
 
 import java.time.LocalDateTime;
 
-import ij.IJ;
-
-public class ZaberDevice extends Controller42Device {
-
-
-	@Override
-	void init42Device() {
-		// logFile and date of file created already done 
-		
-	}
+abstract public class ZaberDevice42 extends DefaultDevice42 {
 
 	@Override
 	public void setDisplayedTime(LocalDateTime time) {
@@ -27,10 +18,7 @@ public class ZaberDevice extends Controller42Device {
 	}
 
 	@Override
-	public void initDisplay() {
-		// TODO Auto-generated method stub
-		
-	}
+	abstract public void initDisplay();
 
 	@Override
 	public void closeDisplay() {

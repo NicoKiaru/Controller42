@@ -1,4 +1,4 @@
-package eu.kiaru.ij.controller42.devices;
+package eu.kiaru.ij.controller42.devices42;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -7,19 +7,21 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import eu.kiaru.ij.controller42.structDevice.DefaultSynchronizedDisplayedDevice;
 import ij.ImagePlus;
+import ij.gui.Plot;
 
-public class CamTrackerDevice extends Controller42Device {
+public class CamTrackerDevice42 extends DefaultDevice42 {
 	
-	CameraDevice linkedCam;
+	CameraDevice42 linkedCam;
 	public String linkedCamName;
 	int currentSampleNumber;
 	int currentSampleDisplayed;
 	float[][] posData;
-	LiveLineChartIJ1 plotChartX,plotChartY;
+	Plot plotChartX,plotChartY;
 	
 	@Override
-	void init42Device() {
+	public void initDevice() {
 		// logFile and date of file created already done
 				BufferedReader reader;
 				try {
@@ -32,8 +34,8 @@ public class CamTrackerDevice extends Controller42Device {
 				    int imgSX=-1;
 				    int imgSY=-1;
 				    String line = reader.readLine(); // image size X
-				    if (line.startsWith("Linked To =")) {
-				    	linkedCamName = line.substring("Linked To =".length()).trim();
+				    if (line.startsWith("Linked to")) {
+				    	linkedCamName = line.substring("Linked to".length()).trim();
 				    }
 			      	reader.close();
 			      	
@@ -43,7 +45,7 @@ public class CamTrackerDevice extends Controller42Device {
 				}
 	}
 
-	void setLinkedCamera(CameraDevice cam) {
+	void setLinkedCamera(CameraDevice42 cam) {
 		System.out.println("SetLinkedCamCalled");
 		// logFile and date of file created already done
 		BufferedReader reader;
@@ -74,7 +76,7 @@ public class CamTrackerDevice extends Controller42Device {
 	@Override
 	public void setDisplayedTime(LocalDateTime time) {		
 		// TODO Auto-generated method stub
-		Duration timeInterval = Duration.between(linkedCam.dateAcquisitionStarted,time);//.dividedBy(numberOfImages-1).toNanos()
+		Duration timeInterval = Duration.between(linkedCam.startAcquisitionTime,time);//.dividedBy(numberOfImages-1).toNanos()
 		double timeIntervalInMs = (timeInterval.getSeconds()*1000+timeInterval.getNano()/1e6);
 		int newSampledDisplayed = (int) (timeIntervalInMs/linkedCam.avgTimeBetweenImagesInMs);
 		if (newSampledDisplayed<0) {
@@ -86,12 +88,12 @@ public class CamTrackerDevice extends Controller42Device {
 		}
 		if (newSampledDisplayed!=currentSampleDisplayed) {
 			currentSampleDisplayed=newSampledDisplayed;
-			double[] range = plotChartX.plot.getLimits(); // xmin xmax ymin ymax
+			double[] range = plotChartX.getLimits(); // xmin xmax ymin ymax
 			double width = range[1]-range[0];
-			plotChartX.plot.setLimits(newSampledDisplayed-1-width/2.0, newSampledDisplayed-1+width/2.0, range[2], range[3]);
-			range = plotChartY.plot.getLimits(); // xmin xmax ymin ymax
+			plotChartX.setLimits(newSampledDisplayed-1-width/2.0, newSampledDisplayed-1+width/2.0, range[2], range[3]);
+			range = plotChartY.getLimits(); // xmin xmax ymin ymax
 			width = range[1]-range[0];
-			plotChartY.plot.setLimits(newSampledDisplayed-1-width/2.0, newSampledDisplayed-1+width/2.0, range[2], range[3]);
+			plotChartY.setLimits(newSampledDisplayed-1-width/2.0, newSampledDisplayed-1+width/2.0, range[2], range[3]);
 		}
 
 	}
@@ -99,8 +101,8 @@ public class CamTrackerDevice extends Controller42Device {
 	@Override
 	protected void makeDisplayVisible() {
 		// TODO Auto-generated method stub
-		plotChartY.plot.show();	
-		plotChartX.plot.show();
+		plotChartY.show();	
+		plotChartX.show();
 		
 	}
 
@@ -108,20 +110,20 @@ public class CamTrackerDevice extends Controller42Device {
 	public void initDisplay() {
 		System.out.println("initDisplay called in the camtracker");
 		// TODO Auto-generated method stub
-		plotChartX = new LiveLineChartIJ1(this.getName()+"_XR",
+		plotChartX = new Plot(this.getName()+"_XR",
 				"Time","PositionX",posData[0],posData[1]);
 		
 		System.out.println("posData[0].length="+posData[0].length);
 		
-		plotChartY = new LiveLineChartIJ1(this.getName()+"_YR",
+		plotChartY = new Plot(this.getName()+"_YR",
 				"Time","PositionY",posData[0],posData[2]);
 	}
 
 	@Override
 	public void closeDisplay() {
 		// TODO Auto-generated method stub
-		plotChartY.plot.getImagePlus().close();	
-		plotChartX.plot.getImagePlus().close();		
+		plotChartY.getImagePlus().close();	
+		plotChartX.getImagePlus().close();		
 	}
 
 	@Override

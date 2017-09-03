@@ -1,4 +1,4 @@
-package eu.kiaru.ij.controller42.devices;
+package eu.kiaru.ij.controller42.devices42;
 
 import ij.*;
 import ij.plugin.PlugIn;
@@ -15,7 +15,7 @@ import org.apache.commons.io.IOUtils;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
-public class CustomWFVirtualStack extends VirtualStack implements PlugIn {
+public class CustomWFVirtualStack42 extends VirtualStack implements PlugIn {
 	final int WIDTH; //= 512;
 	final int HEIGHT; //= 512;
 	//final int SIZE; = 100;*/
@@ -36,12 +36,12 @@ public class CustomWFVirtualStack extends VirtualStack implements PlugIn {
 	
 
 	public void run(String arg) {
-		ImageStack stack = new CustomWFVirtualStack(WIDTH, HEIGHT, 100, null, null);
+		ImageStack stack = new CustomWFVirtualStack42(WIDTH, HEIGHT, 100, null, null);
 		ImagePlus imp = new ImagePlus("Empty Virtual Stack", stack);
 		imp.show();
 	}
 	
-	public CustomWFVirtualStack(int width, int height, int nSlices, ColorModel cm, String path) {
+	public CustomWFVirtualStack42(int width, int height, int nSlices, ColorModel cm, String path) {
 		super(width, height, cm, path);
 		WIDTH=width;
 		HEIGHT=height;
@@ -84,7 +84,7 @@ public class CustomWFVirtualStack extends VirtualStack implements PlugIn {
 			String fileName = attachedRawDataPrefixFile+"_0.raw";
 			// Needs to close and open need data file
 			try {
-				System.out.println("fileName="+fileName);
+				//System.out.println("fileName="+fileName);
 				currentInputFile = new RandomAccessFile(fileName, "r");
 				currentChannel = currentInputFile.getChannel();
 			} catch (FileNotFoundException e) {
@@ -166,7 +166,7 @@ public class CustomWFVirtualStack extends VirtualStack implements PlugIn {
 			pixSum+=(bgPixels[i]&0xff);
 		}
 		avgBG = (float)((double)pixSum/(double)(WIDTH*HEIGHT));
-		System.out.println("avgBG="+avgBG);
+		//System.out.println("avgBG="+avgBG);
 	}
 	
 	ArrayList<Integer> indexOfStartingImageInFile;
