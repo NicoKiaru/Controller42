@@ -52,31 +52,8 @@ public class CustomWFVirtualStack42 extends VirtualStack implements PlugIn {
 	}
 	
 	public void getBytesOfImg(int imgNumber, byte[] myBytes) {
-		/*if (imgNumber==0) {
-			for (int i=0;i<myBytes.length;i++) {
-				myBytes[i]=(byte) i;
-			}
-		} else {
-			for (int i=0;i<myBytes.length;i++) {
-				myBytes[i]=(byte) (10*java.lang.Math.sin((60.0-imgNumber)/60.0*i/750));
-			}
-		}*/
-		/*if (currentFileIndex==-1) {
-			// Needs a first Opening
-			currentFileIndex=0;
-			String fileName = attachedRawDataPrefixFile+"_"+currentFileIndex+".raw";
-			try {
-				currentInputFile = new RandomAccessFile(fileName, "r");
-				currentChannel = currentInputFile.getChannel();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				System.err.println("Couldn't find file "+fileName);
-			}			
-		}*/
-
-		int minIndex;// = indexOfStartingImageInFile.get(currentFileIndex);
-		int maxIndex;// = indexOfStartingImageInFile.get(currentFileIndex+1);
+		int minIndex;
+		int maxIndex;
 		if (currentFileIndex==-1) {
 			currentFileIndex=0;
 			minIndex = indexOfStartingImageInFile.get(0);
@@ -84,11 +61,9 @@ public class CustomWFVirtualStack42 extends VirtualStack implements PlugIn {
 			String fileName = attachedRawDataPrefixFile+"_0.raw";
 			// Needs to close and open need data file
 			try {
-				//System.out.println("fileName="+fileName);
 				currentInputFile = new RandomAccessFile(fileName, "r");
 				currentChannel = currentInputFile.getChannel();
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				System.err.println("Couldn't find file "+fileName);
 			}
@@ -96,50 +71,39 @@ public class CustomWFVirtualStack42 extends VirtualStack implements PlugIn {
 			minIndex = indexOfStartingImageInFile.get(currentFileIndex);
 			maxIndex = indexOfStartingImageInFile.get(currentFileIndex+1);
 		}
+
 		if (!((imgNumber>=minIndex)&&(imgNumber<maxIndex))) {
 			try {
 				currentChannel.close();
 				currentInputFile.close();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				// e1.printStackTrace();
-				System.out.println("Doesn't care!");
+				// Necessary to be there on first call -> we don't care
 			}
-			// Let's find the correct index
-			int currentFileIndex=0;
+			currentFileIndex=0;
 			while (imgNumber>=indexOfStartingImageInFile.get(currentFileIndex+1)) {
 				currentFileIndex++;
 			}
+			
 			String fileName = attachedRawDataPrefixFile+"_"+currentFileIndex+".raw";
-			System.out.println("fileName="+fileName);
-			// Needs to close and open need data file
 			try {
 				currentInputFile = new RandomAccessFile(fileName, "r");
 				currentChannel = currentInputFile.getChannel();
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				System.err.println("Couldn't find file "+fileName);
 			}			
 		}
-		
 		try {
-			long position = (imgNumber-indexOfStartingImageInFile.get(currentFileIndex))*WIDTH*HEIGHT;
-			//System.out.println("position="+position);
+			long position = ((long)(imgNumber-indexOfStartingImageInFile.get(currentFileIndex)))*((long) WIDTH*HEIGHT);
 			ByteBuffer copy = ByteBuffer.allocate(WIDTH*HEIGHT*2);
+
 			currentChannel.position(position);
-		    currentChannel.read(copy);//+" bytes read");
-			//System.out.println("posiiton="+copy.position());
+		    currentChannel.read(copy);
 			copy.flip();
-			//System.out.println(copy.getShort());
 			copy.get(myBytes);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		//IOUtils.toByteArray(input)
-		
 	}
 	
 	public void closeFiles() {
@@ -166,7 +130,6 @@ public class CustomWFVirtualStack42 extends VirtualStack implements PlugIn {
 			pixSum+=(bgPixels[i]&0xff);
 		}
 		avgBG = (float)((double)pixSum/(double)(WIDTH*HEIGHT));
-		//System.out.println("avgBG="+avgBG);
 	}
 	
 	ArrayList<Integer> indexOfStartingImageInFile;
@@ -188,21 +151,14 @@ public class CustomWFVirtualStack42 extends VirtualStack implements PlugIn {
 			index++;
 			suffix="_"+index+".raw";
 		} while (tmpFile.exists());
-
-		//currentInputStream.s
-		/*for (Integer ind:indexOfStartingImageInFile) {
-			System.out.println("index="+ind);
-		}*/
 	}
-
-	/*boolean isSliceInCurrentOpenedFile(int n) {
-		return 
-	}*/
 	
-	public ImageProcessor getProcessor(int n) {		
+	/**
+	 * synchronized to avoid concurrent access : the channel is shared for display and processing
+	 */
+	public synchronized ImageProcessor getProcessor(int n) {		// 
 		byte[] rawData = new byte[WIDTH*HEIGHT];
 		getBytesOfImg(n,rawData);
-		  //includes 0.5 for rounding when converting float to byte
 		//See https://github.com/imagej/imagej1/blob/master/ij/plugin/filter/BackgroundSubtracter.java		
 		for (int p=0; p<bgPixels.length; p++) {
 			 //float value = (rawData[p]&0xff) - (bgPixels[p]&0xff) + offset;

@@ -1,20 +1,19 @@
 package eu.kiaru.ij.controller42.devices42;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-
-import eu.kiaru.ij.controller42.structDevice.DefaultSynchronizedDisplayedDevice;
+import eu.kiaru.ij.controller42.structDevice.UniformlySampledSynchronizedDisplayedDevice;
 import ij.ImageListener;
 import ij.ImagePlus;
+import ij.process.ImageProcessor;
 
 
-public class CameraDevice42 extends DefaultDevice42 implements ImageListener{
-	/* Typical Header:
+public class CameraDevice42 extends UniformlySampledSynchronizedDisplayedDevice<ImageProcessor> implements ImageListener {
+	/* Typical Header (V2):
 	 * ============
 	 * TYPE = Camera
 	 * Log file for device CAMERA_GUPPY
@@ -34,10 +33,10 @@ public class CameraDevice42 extends DefaultDevice42 implements ImageListener{
 	
 	//CustomWFVirtualStack myVirtualStack;
 	ImagePlus myImpPlus;
-	private int currentImageDisplayed;
-	public double avgTimeBetweenImagesInMs;
+	//private int currentImageDisplayed;
+	//public double avgTimeBetweenImagesInMs;
 	//LocalDateTime dateAcquisitionStarted;
-	int numberOfImages;
+	//int numberOfImages;
 	
 	@Override
 	public void makeDisplayVisible() {
@@ -45,10 +44,11 @@ public class CameraDevice42 extends DefaultDevice42 implements ImageListener{
 	}
 
 	@Override
-	public void makeDisplayInvisible() {		
+	public void makeDisplayInvisible() {
+		myImpPlus.hide();
 	}	
 
-	@Override
+	/*@Override
 	public void setDisplayedTime(LocalDateTime time) {
 		// Needs to find the correct image number
 		Duration timeInterval = Duration.between(this.startAcquisitionTime,time);//.dividedBy(numberOfImages-1).toNanos()
@@ -68,7 +68,7 @@ public class CameraDevice42 extends DefaultDevice42 implements ImageListener{
 				myImpPlus.setPosition(currentImageDisplayed); // +1 ? // Is this firing an event ?
 			}
 		}
-	}
+	}*/
 	
 	CustomWFVirtualStack42 myVirtualStack;
 	@Override
@@ -95,50 +95,41 @@ public class CameraDevice42 extends DefaultDevice42 implements ImageListener{
 		    	reader.readLine();
 		    }
 		    
-		    //System.out.println(imgSX+":"+imgSY);
-		    
 		    String firstLine=reader.readLine();
 		    if (firstLine==null) {
 		    	System.err.println("Could not find proper camera information... in device "+this.getName());
 		    	reader.close();
 		    	return;
 		    }
-		    //System.out.println(firstLine);
 		    String lastLine = "";
 		    String sCurrentLine;
-		    numberOfImages=1;
+		    int nSamples=1;
 		    while ((sCurrentLine = reader.readLine()) != null) 
 		    {
-		    	//System.out.println(sCurrentLine);
 		        lastLine = sCurrentLine;
-		        numberOfImages++;
+		        nSamples++;
 		    }
-		    //System.out.println(numberOfImages);
-		    //DateFormat format = new SimpleDateFormat("'1\t'HH'\t'mm'\t'ss.SSSS", Locale.FRANCE);
-		    //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("'1\t'HH'\t'mm'\t'ss.SSSS");
 		    LocalTime timeIni = Device42Helper.fromCameraLogLine(firstLine);//.LocalTime.parse(firstLine,formatter);			    
 		    LocalTime timeEnd = null;
-		   	avgTimeBetweenImagesInMs = 1;
+		   	double avgTimeBetweenImagesInMs = 1;
 		   	if (!lastLine.equals("")) {
-		   		//formatter = DateTimeFormatter.ofPattern("HH'\t'mm'\t'ss.SSSS");
-			   	timeEnd = Device42Helper.fromCameraLogLine(lastLine);
-			   	avgTimeBetweenImagesInMs = Duration.between(timeIni,timeEnd).dividedBy(numberOfImages-1).toNanos()/1e6;
-			   	if (avgTimeBetweenImagesInMs<0) {
-			   		System.err.println("Negative time between images... Are you acquiring overnight ?");
-			   		reader.close();
-			   		return; // I hope there's no overnight acquisition
-			   	}
+			   	timeEnd = Device42Helper.fromCameraLogLine(lastLine);			   
+			   	avgTimeBetweenImagesInMs = Duration.between(timeIni,timeEnd).dividedBy(nSamples-1).toNanos()/1e6;
 		   	}
 		   	startAcquisitionTime=LocalDateTime.of(this.startAcquisitionTime.toLocalDate(),timeIni);
-	      	endAcquisitionTime=this.startAcquisitionTime.plus(Duration.between(timeIni, timeEnd)).plusNanos((long)(avgTimeBetweenImagesInMs*1e6));
+		   	endAcquisitionTime=LocalDateTime.of(this.startAcquisitionTime.toLocalDate(),timeEnd).plus(Duration.ofNanos((long)(avgTimeBetweenImagesInMs*1e6)));
+	      	
+	    	this.setSamplingInfos(startAcquisitionTime, endAcquisitionTime, nSamples);
 		   	reader.close();
 	      	
 	      	// now Fetch data and open them
 	      	String attachedRawDataPrefixFile = this.logFile.getPath().substring(0, this.logFile.getPath().length()-4);
-
-	      	myVirtualStack = new CustomWFVirtualStack42(imgSX, imgSY, numberOfImages, null, null);
-	      	myVirtualStack.setAttachedDataPath(attachedRawDataPrefixFile);
 	      	
+	      	
+	      	myVirtualStack = new CustomWFVirtualStack42(imgSX, imgSY, this.getNumberOfSamples(), null, null);
+	      	System.out.println(myVirtualStack==null);
+	      	myVirtualStack.setAttachedDataPath(attachedRawDataPrefixFile);
+	      	System.out.println(myVirtualStack==null);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -156,25 +147,16 @@ public class CameraDevice42 extends DefaultDevice42 implements ImageListener{
 
 	@Override
 	public void imageUpdated(ImagePlus src) {
-		// TODO Auto-generated method stub
-		int newDisplayedSlice = src.getCurrentSlice();
 		// Get the new 
 		// Check if the source is correct...
 		if (src.getTitle().equals(this.getName())) {
-			if (newDisplayedSlice==this.currentImageDisplayed) {
-				// do nothing
-			} else {
-				// Needs to compute the Instant on which this image was Acquired
-				double durationInNS = avgTimeBetweenImagesInMs*(newDisplayedSlice-1)*1e6+avgTimeBetweenImagesInMs/2.0;
-				this.setCurrentTime(this.startAcquisitionTime.plusNanos((long)durationInNS));			
-				this.currentImageDisplayed=newDisplayedSlice;
-				this.fireDeviceTimeChangedEvent();
-			}
+			this.notifyNewSampleDisplayed(src.getCurrentSlice()-1); // because IJ1 notation
 		}
 	}
 
 	@Override
 	public void initDisplay() {
+		if (myVirtualStack==null) {System.out.println("prout");}
 		myImpPlus = new ImagePlus(this.getName(), myVirtualStack);
 		myImpPlus.addImageListener(this);
 	}
@@ -191,5 +173,31 @@ public class CameraDevice42 extends DefaultDevice42 implements ImageListener{
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void displayCurrentSample() {
+		// TODO Auto-generated method stub
+		if (myImpPlus!=null) {
+			myImpPlus.setPosition(this.getCurrentSampleIndexDisplayed()+1); // +1 ? because IJ1 notation
+		}
+	}
+
+	@Override
+	public ImageProcessor getSample(int n) {
+		return myImpPlus.getStack().getProcessor(n);
+	}
+	
+	private File logFile;
+	private int logVersion;
+	
+	@Override
+	public void initDevice(File f, int vers) {
+		// TODO Auto-generated method stub
+		logFile=f;	
+		logVersion=vers;
+		System.out.println("alors on a le logfile");
+	}
+
+	
 
 }

@@ -1,11 +1,12 @@
 package eu.kiaru.ij.controller42.structDevice;
 
+import java.io.File;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-abstract public class DefaultSynchronizedDisplayedDevice implements SynchronizableDevice, DisplayableDevice{
+abstract public class DefaultSynchronizedDisplayedDevice implements Synchronizable, Displayable{
 	private LocalDateTime currentTime;
 	boolean isDisplayed = false;
 	boolean isSynchronized = true;
@@ -16,6 +17,7 @@ abstract public class DefaultSynchronizedDisplayedDevice implements Synchronizab
 	
 	public LocalDateTime startAcquisitionTime,endAcquisitionTime;
 	
+	
 	//public LocalDateTime instantAcquisitionStarted;
 	//public Object deviceReferenceObject;	
 	
@@ -23,7 +25,9 @@ abstract public class DefaultSynchronizedDisplayedDevice implements Synchronizab
 		//this.initDisplay();
 	}
 	
+	// Ways this can be initialized
 	abstract public void initDevice();
+	abstract public void initDevice(File f, int version);
 	
 	public void setDisplayedTimeShift(Duration shift) {
 		displayedTimeShift=shift;

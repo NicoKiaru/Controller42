@@ -3,21 +3,15 @@ package eu.kiaru.ij.controller42.devices42;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import eu.kiaru.ij.controller42.structDevice.DefaultSynchronizedDisplayedDevice;
 
 public class Device42Helper {
-	File logFile;
 	
 	
 	public static String defautHeaderDevice42Line1       = "============";
@@ -42,6 +36,25 @@ public class Device42Helper {
         iMap.put("ZDrive_Nikon", null);
         iMap.put("Camera", CameraDevice42.class);
         devices42Map = Collections.unmodifiableMap(iMap);
+    }
+    
+    private static final Map<String, Class> devices42MapV1Compatibility;
+    static {
+        Map<String, Class> iMap = new HashMap<>();
+        iMap.put("Aladdin", null);
+        iMap.put("CAMERA_GUPPY.LOG", CameraDevice42.class);
+        iMap.put("MP_285", null);
+        iMap.put("NikonTIControl", null);
+        iMap.put("Shutter", null);
+        iMap.put("Shutter_Listen", null);
+        iMap.put("Thorlabs_SH05", null);
+        iMap.put("BEAD_TRACKER.LOG", CamTrackerDevice42.class);
+        iMap.put("Tracker_Focus", null);
+        iMap.put("UserNotification", null);
+        iMap.put("ZABER_RIGHT.LOG", ZaberDevice42V1.class);
+        iMap.put("ZDrive_Nikon", null);
+        iMap.put("Camera", CameraDevice42.class);
+        devices42MapV1Compatibility = Collections.unmodifiableMap(iMap);
     }
     
     final public static int IS_NOT_DEVICE42=0;
@@ -73,14 +86,61 @@ public class Device42Helper {
 		}
     }
     
-    static public DefaultDevice42 initDevice42_V1(File path) {
-    	System.out.println("42 Device compatibility v1 not working...");
-    	return null;
+    static public DefaultSynchronizedDisplayedDevice initDevice42_V1(File path) {
+    	System.out.println("Initializing device V1...");
+    	DefaultSynchronizedDisplayedDevice device = null;
+    	try
+		{   
+    		BufferedReader reader = new BufferedReader(new FileReader(path.getAbsolutePath()));
+	    	try {
+			    String line;		    
+			    line = reader.readLine();
+			    line = reader.readLine();				    
+					String deviceName = line.trim().substring(defautHeaderDevice42Line2Prefix.length()).trim();
+					System.out.println("Name:"+deviceName);
+				line = reader.readLine(); // line 3 -> starting Date
+					String strDate = line.trim().substring(defautHeaderDevice42Line3Prefix.length()).trim();
+					System.out.println("\t Log File created on "+strDate);
+					LocalDateTime startTime = fromLogFileLine(strDate);//LocalDateTime.parse(strDate,formatter);		   	  		   	  
+		    	/*line = reader.readLine(); // line 4 -> device type
+		    		String deviceTypeName = line.trim().substring(defautHeaderDevice42Line4Prefix.length()).trim();
+		    		Class deviceClass= devices42Map.get(deviceTypeName);
+		    		if (deviceClass==null) {
+		    			System.out.println("Currently Unsupported]");
+		    			return null;
+		    		}*/
+					
+				Class deviceClass= devices42MapV1Compatibility.get(path.getName().toUpperCase());
+				if (deviceClass==null) {
+	    			System.out.println("Currently Unsupported]");
+	    			return null;
+	    		}
+				
+				
+				device = (DefaultSynchronizedDisplayedDevice) deviceClass.newInstance();
+				device.setName(deviceName);
+				device.initDevice(path,1);
+				device.startAcquisitionTime=startTime;
+			    device.initDevice();
+			    //
+			    if (deviceClass.equals(CamTrackerDevice42.class)) {
+			    	 ((CamTrackerDevice42) device).linkedCamName="CAMERA_GUPPY";
+			    }
+			    return device;
+		    } finally {
+		    	reader.close();
+		    }
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		    return null;
+		}
     }
     
-    static public DefaultDevice42 initDevice42_V2(File path) {   
+    static public DefaultSynchronizedDisplayedDevice initDevice42_V2(File path) {   
     	System.out.println("Initializing device V2...");
-    	DefaultDevice42 device = null;
+    	DefaultSynchronizedDisplayedDevice device = null;
     	try
 		{   
     		BufferedReader reader = new BufferedReader(new FileReader(path.getAbsolutePath()));
@@ -101,9 +161,9 @@ public class Device42Helper {
 		    			System.out.println("Currently Unsupported]");
 		    			return null;
 		    		}
-				device = (DefaultDevice42) deviceClass.newInstance();
+				device = (DefaultSynchronizedDisplayedDevice) deviceClass.newInstance();
 				device.setName(deviceName);
-				device.logFile=path;
+				device.initDevice(path,2);
 				device.startAcquisitionTime=startTime;
 			    device.initDevice();			    
 			    return device;
@@ -118,8 +178,8 @@ public class Device42Helper {
 		}
     }
     
-    public static DefaultDevice42 getController42Device(File path) {
-    	DefaultDevice42 device = null;
+    public static DefaultSynchronizedDisplayedDevice getController42Device(File path) {
+    	DefaultSynchronizedDisplayedDevice device = null;
     	switch (getController42LogFileVersion(path)) {
 			case IS_NOT_DEVICE42:
 				break;

@@ -32,6 +32,7 @@ public class Device42Factory {
 	
 	public static void linkDevices(Map<String,DefaultSynchronizedDisplayedDevice> devices) {
 		for (DefaultSynchronizedDisplayedDevice device: devices.values()) {
+			System.out.println(device.getName());
 			if (device.getClass()==CamTrackerDevice42.class) {
 				((CamTrackerDevice42)device).setLinkedCamera((CameraDevice42)(devices.get(((CamTrackerDevice42)device).linkedCamName)));
 			}
