@@ -6,13 +6,12 @@ import java.io.FileReader;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import eu.kiaru.ij.controller42.structDevice.UniformlySampledSynchronizedDisplayedDevice;
-import ij.ImageListener;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
+import eu.kiaru.ij.controller42.stdDevices.ImagePlusDeviceUniformlySampled;
 
 
-public class CameraDevice42 extends UniformlySampledSynchronizedDisplayedDevice<ImageProcessor> implements ImageListener {
+public class CameraDevice42 extends ImagePlusDeviceUniformlySampled {
 	/* Typical Header (V2):
 	 * ============
 	 * TYPE = Camera
@@ -30,47 +29,8 @@ public class CameraDevice42 extends UniformlySampledSynchronizedDisplayedDevice<
 	 * (non-Javadoc)
 	 * @see eu.kiaru.ij.controller42.DefaultSynchronizedDisplayedDevice#removeDisplay()
 	 */
+	CustomWFVirtualStack42 myVirtualStack;	
 	
-	//CustomWFVirtualStack myVirtualStack;
-	ImagePlus myImpPlus;
-	//private int currentImageDisplayed;
-	//public double avgTimeBetweenImagesInMs;
-	//LocalDateTime dateAcquisitionStarted;
-	//int numberOfImages;
-	
-	@Override
-	public void makeDisplayVisible() {
-		myImpPlus.show();
-	}
-
-	@Override
-	public void makeDisplayInvisible() {
-		myImpPlus.hide();
-	}	
-
-	/*@Override
-	public void setDisplayedTime(LocalDateTime time) {
-		// Needs to find the correct image number
-		Duration timeInterval = Duration.between(this.startAcquisitionTime,time);//.dividedBy(numberOfImages-1).toNanos()
-		double timeIntervalInMs = (timeInterval.getSeconds()*1000+timeInterval.getNano()/1e6);
-		int newImgDisplayed = (int) (timeIntervalInMs/avgTimeBetweenImagesInMs);
-		newImgDisplayed+=1;// because of IJ1 notation style
-		if (newImgDisplayed<0) {
-			newImgDisplayed=0;
-		}
-		if (newImgDisplayed>numberOfImages) {
-			newImgDisplayed=numberOfImages;
-		}
-		if (newImgDisplayed!=currentImageDisplayed) {
-			currentImageDisplayed=newImgDisplayed;
-			// needs to update the window, if any
-			if (myImpPlus!=null) {
-				myImpPlus.setPosition(currentImageDisplayed); // +1 ? // Is this firing an event ?
-			}
-		}
-	}*/
-	
-	CustomWFVirtualStack42 myVirtualStack;
 	@Override
 	public void initDevice() {
 		// logFile and date of file created already done
@@ -138,7 +98,6 @@ public class CameraDevice42 extends UniformlySampledSynchronizedDisplayedDevice<
 
 	@Override
 	public void imageClosed(ImagePlus src) {
-		// TODO Auto-generated method stub
 		if (src.getTitle().equals(this.getName())) {
 			((CustomWFVirtualStack42) myImpPlus.getStack()).closeFiles();
 		}
@@ -146,40 +105,10 @@ public class CameraDevice42 extends UniformlySampledSynchronizedDisplayedDevice<
 	}
 
 	@Override
-	public void imageUpdated(ImagePlus src) {
-		// Get the new 
-		// Check if the source is correct...
-		if (src.getTitle().equals(this.getName())) {
-			this.notifyNewSampleDisplayed(src.getCurrentSlice()-1); // because IJ1 notation
-		}
-	}
-
-	@Override
 	public void initDisplay() {
 		if (myVirtualStack==null) {System.out.println("prout");}
 		myImpPlus = new ImagePlus(this.getName(), myVirtualStack);
 		myImpPlus.addImageListener(this);
-	}
-
-	@Override
-	public void closeDisplay() {
-		// TODO Auto-generated method stub
-		myImpPlus.close();
-	}
-	
-	// Useless
-	@Override
-	public void imageOpened(ImagePlus src) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void displayCurrentSample() {
-		// TODO Auto-generated method stub
-		if (myImpPlus!=null) {
-			myImpPlus.setPosition((int)(this.getCurrentSampleIndexDisplayed())+1); // +1 ? because IJ1 notation
-		}
 	}
 
 	@Override
@@ -192,12 +121,8 @@ public class CameraDevice42 extends UniformlySampledSynchronizedDisplayedDevice<
 	
 	@Override
 	public void initDevice(File f, int vers) {
-		// TODO Auto-generated method stub
 		logFile=f;	
 		logVersion=vers;
 		System.out.println("alors on a le logfile");
 	}
-
-	
-
 }

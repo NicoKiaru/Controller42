@@ -20,6 +20,7 @@ import org.scijava.plugin.Plugin;
 import org.scijava.ui.UIService;
 
 import eu.kiaru.ij.controller42.devices42.Device42Factory;
+import eu.kiaru.ij.controller42.stdDevices.StdDeviceFactory;
 import eu.kiaru.ij.controller42.structDevice.DefaultSynchronizedDisplayedDevice;
 import ij.IJ;
 import ij.WindowManager;
@@ -54,18 +55,31 @@ public class LoadExperiment implements Command {
         uiService.show("Directory : "+myDir.getAbsolutePath());
         File[] files = myDir.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
-                return name.toLowerCase().endsWith(".log");
+                return (name.toLowerCase().endsWith(".log")
+                	  ||name.toLowerCase().endsWith(".tif")
+                	  ||name.toLowerCase().endsWith(".tiff"));
             }
         });
         
         DSDevicesSynchronizer synchronizer= new DSDevicesSynchronizer();
         
         for (File f:files) {
+        	boolean initialized=false;
         	//uiService.show("File : "+f.getAbsolutePath());
-        	DefaultSynchronizedDisplayedDevice device = Device42Factory.getDevice(f);
+        	DefaultSynchronizedDisplayedDevice device;
+        	device = Device42Factory.getDevice(f);
         	if (device!=null) {
         		synchronizer.addDevice(device);
-        	}        	
+        		initialized=true;
+        	}
+        	if (!initialized) {
+        		System.out.println("alors punaise ?");
+	        	device = StdDeviceFactory.getDevice(f);
+	        	if (device!=null) {
+	        		synchronizer.addDevice(device);
+	        		initialized=true;
+	        	}
+	        }
         }   
 
     	Device42Factory.linkDevices(synchronizer.getDevices());
