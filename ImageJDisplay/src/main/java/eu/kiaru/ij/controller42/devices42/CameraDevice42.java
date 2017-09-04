@@ -178,7 +178,7 @@ public class CameraDevice42 extends UniformlySampledSynchronizedDisplayedDevice<
 	public void displayCurrentSample() {
 		// TODO Auto-generated method stub
 		if (myImpPlus!=null) {
-			myImpPlus.setPosition(this.getCurrentSampleIndexDisplayed()+1); // +1 ? because IJ1 notation
+			myImpPlus.setPosition((int)(this.getCurrentSampleIndexDisplayed())+1); // +1 ? because IJ1 notation
 		}
 	}
 

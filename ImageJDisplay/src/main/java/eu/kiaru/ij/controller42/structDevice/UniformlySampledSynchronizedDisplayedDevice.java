@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 abstract public class UniformlySampledSynchronizedDisplayedDevice<T> extends DefaultSynchronizedDisplayedDevice implements Samplable<T> {	
 	T currentSample;
-	int currentSampleIndexDisplayed;
+	long currentSampleIndexDisplayed;
 	private double avgTimeBetweenSamplesInMs;
 	private int numberOfSamples;
 
@@ -25,7 +25,7 @@ abstract public class UniformlySampledSynchronizedDisplayedDevice<T> extends Def
 		}
 	}
 	
-	public synchronized int getCurrentSampleIndexDisplayed() {
+	public synchronized long getCurrentSampleIndexDisplayed() {
 		return currentSampleIndexDisplayed;
 	}
 	
@@ -54,7 +54,7 @@ abstract public class UniformlySampledSynchronizedDisplayedDevice<T> extends Def
 	
 	public void notifyNewSampleDisplayed(int newDisplayedSample) {
 		if (newDisplayedSample!=this.currentSampleIndexDisplayed) {
-			double durationInNS = avgTimeBetweenSamplesInMs*(newDisplayedSample-1)*1e6+avgTimeBetweenSamplesInMs/2.0;
+			double durationInNS = avgTimeBetweenSamplesInMs*(newDisplayedSample)*1e6;//+avgTimeBetweenSamplesInMs/2.0;
 			this.setCurrentTime(this.startAcquisitionTime.plusNanos((long)durationInNS).minus(this.getDisplayedTimeShift()));			
 			this.currentSampleIndexDisplayed=newDisplayedSample;
 			this.fireDeviceTimeChangedEvent();
@@ -66,8 +66,9 @@ abstract public class UniformlySampledSynchronizedDisplayedDevice<T> extends Def
 		if (this.samplingRateInitialized) {
 		// Needs to find the correct image number
 		Duration timeInterval = Duration.between(this.startAcquisitionTime,time);//.dividedBy(numberOfImages-1).toNanos()
-		double timeIntervalInMs = (timeInterval.getSeconds()*1000+timeInterval.getNano()/1e6);
-		int newSampleDisplayed = (int) (timeIntervalInMs/avgTimeBetweenSamplesInMs);
+		double timeIntervalInMs = ((timeInterval.getSeconds()*1000)+(timeInterval.getNano())/1e6);
+		long newSampleDisplayed = java.lang.Math.round((double)(timeIntervalInMs/avgTimeBetweenSamplesInMs));
+		
 		//newSampleDisplayed+=1;// because of IJ1 notation style
 		if (newSampleDisplayed<0) {
 			newSampleDisplayed=0;

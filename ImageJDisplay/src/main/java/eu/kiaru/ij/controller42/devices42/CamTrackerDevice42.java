@@ -183,15 +183,15 @@ public class CamTrackerDevice42 extends UniformlySampledSynchronizedDisplayedDev
 	@Override
 	public void displayCurrentSample() {
 		// TODO Auto-generated method stub
-		int currentSampleDisplayed=this.getCurrentSampleIndexDisplayed();
+		long currentSampleDisplayed=this.getCurrentSampleIndexDisplayed();
 		double[] range = plotChartX.plot.getLimits(); // xmin xmax ymin ymax
 		double width = range[1]-range[0];
-		plotChartX.plot.setLimits(currentSampleDisplayed-1-width/2.0, currentSampleDisplayed-1+width/2.0, range[2], range[3]);
+		plotChartX.plot.setLimits(currentSampleDisplayed-width/2.0, currentSampleDisplayed+width/2.0, range[2], range[3]);
 		plotChartX.checkLineAtCurrentLocation(currentSampleDisplayed);
 		
 		range = plotChartY.plot.getLimits(); // xmin xmax ymin ymax
 		width = range[1]-range[0];
-		plotChartY.plot.setLimits(currentSampleDisplayed-1-width/2.0, currentSampleDisplayed-1+width/2.0, range[2], range[3]);
+		plotChartY.plot.setLimits(currentSampleDisplayed-width/2.0, currentSampleDisplayed+width/2.0, range[2], range[3]);
 		plotChartY.checkLineAtCurrentLocation(currentSampleDisplayed);
 		
 	}

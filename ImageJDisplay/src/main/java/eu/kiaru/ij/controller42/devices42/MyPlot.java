@@ -1,5 +1,7 @@
 package eu.kiaru.ij.controller42.devices42;
 
+import java.awt.Color;
+
 import ij.gui.Line;
 import ij.gui.Plot;
 import ij.gui.Roi;
@@ -15,8 +17,11 @@ public class MyPlot {
 		
 	}
 	
-	void checkLineAtCurrentLocation(int n) {
-		if (lineCurrentTime==null) {
+	void checkLineAtCurrentLocation(long n) {
+		if (lineCurrentTime==null) {			
+			ij.gui.Roi.setColor(new Color(150,50,50));
+			ij.gui.Line.setWidth(2);
+			ij.gui.Line.setColor(new Color(150,50,50));
 			lineCurrentTime = new Line(pX,0,pX,h);
 			if (plot.getImagePlus()!=null)
 				if (plot.getImagePlus().getOverlay()!=null)
@@ -32,6 +37,9 @@ public class MyPlot {
 			if (plot.getImagePlus()!=null)
 				if (plot.getImagePlus().getOverlay()!=null)
 					plot.getImagePlus().getOverlay().remove(lineCurrentTime);
+			ij.gui.Roi.setColor(new Color(150,50,50));
+			ij.gui.Line.setWidth(2);
+			ij.gui.Line.setColor(new Color(150,50,50));
 			lineCurrentTime = new Line(pX,0,pX,h);
 			if (plot.getImagePlus()!=null)
 				if (plot.getImagePlus().getOverlay()!=null)
@@ -44,7 +52,9 @@ public class MyPlot {
 			if (plot.getImagePlus()!=null)
 				if (plot.getImagePlus().getOverlay()!=null)
 					plot.getImagePlus().getOverlay().remove(lineCurrentTime);
-			lineCurrentTime = new Line(pX,0,pX,h);
+			ij.gui.Roi.setColor(new Color(150,50,50));
+			ij.gui.Line.setWidth(2);
+			ij.gui.Line.setColor(new Color(150,50,50));lineCurrentTime = new Line(pX,0,pX,h);
 			if (plot.getImagePlus()!=null)
 				if (plot.getImagePlus().getOverlay()!=null)
 					plot.getImagePlus().getOverlay().add(lineCurrentTime);	
