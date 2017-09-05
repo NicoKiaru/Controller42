@@ -19,6 +19,7 @@ public class ImagePlusDeviceUniformlySampled extends UniformlySampledSynchronize
 				myImpPlus.setSlice((int) this.getCurrentSampleIndexDisplayed()+1);
 			} else {
 				int[] stackPos = myImpPlus.convertIndexToPosition(myImpPlus.getCurrentSlice());
+				System.out.println("frame="+((int) this.getCurrentSampleIndexDisplayed()+1));
 				myImpPlus.setPosition(stackPos[0], stackPos[1], (int) this.getCurrentSampleIndexDisplayed()+1);
 			}
 		}
@@ -88,11 +89,11 @@ public class ImagePlusDeviceUniformlySampled extends UniformlySampledSynchronize
 		this.myImpPlus=myImgPlus;
 		System.out.println("myImpPlus is null="+(myImpPlus==null));
 		this.setName(myImpPlus.getTitle());
-		/*System.out.println("fps="+this.myImpPlus.getCalibration().fps);
+		System.out.println("fps="+this.myImpPlus.getCalibration().fps);
 		System.out.println("frameinterval="+this.myImpPlus.getCalibration().frameInterval);
 		System.out.println("info="+this.myImpPlus.getCalibration().info);
 		System.out.println("timeunit="+this.myImpPlus.getCalibration().getTimeUnit());
-		System.out.println("calibrated()="+this.myImpPlus.getCalibration().calibrated());*/
+		System.out.println("calibrated()="+this.myImpPlus.getCalibration().calibrated());
 		if (myImpPlus.getCalibration().getClass().equals(CalibrationTimeOrigin.class)) {
 			//System.out.println("yes!");
 			this.startAcquisitionTime=((CalibrationTimeOrigin)(myImpPlus.getCalibration())).startAcquisitionTime;

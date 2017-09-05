@@ -172,7 +172,7 @@ public class CustomWFVirtualStack42 extends VirtualStack {//implements PlugIn {
 		byte[] transposedData = new byte[WIDTH*HEIGHT];
 		for (int x=0;x<WIDTH;x++) {
 			for (int y=0;y<HEIGHT;y++) {
-				transposedData[x+y*WIDTH]=rawData[y+x*HEIGHT];
+				transposedData[x+y*WIDTH]=rawData[y+(WIDTH-x-1)*HEIGHT];
 			}
 		}
 		// raw is actually not raw

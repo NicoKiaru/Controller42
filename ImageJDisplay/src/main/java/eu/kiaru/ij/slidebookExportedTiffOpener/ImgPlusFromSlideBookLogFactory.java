@@ -42,8 +42,7 @@ public class ImgPlusFromSlideBookLogFactory {
 		    line = reader.readLine();
 		    if (!line.startsWith("Capture Date-Time:")) return null;
 		    line = line.substring("Capture Date-Time:".length());
-		    LocalDateTime startAcqu = fromLogFileLine(line);
-		    System.out.println(startAcqu);
+		    LocalDateTime endAcqu = fromLogFileLine(line);
 		    
 		    line = reader.readLine();
 		    if (!line.startsWith("Z Planes:")) return null;
@@ -72,11 +71,11 @@ public class ImgPlusFromSlideBookLogFactory {
 		    line = line.substring(0, line.indexOf("ms")).trim();
 		    double avgTimeLapseInterval = Double.parseDouble(line);
 		    
-		    System.out.println(startAcqu);
+		    /*System.out.println(startAcqu);
 		    System.out.println("zp ="+zPlanes);
 		    System.out.println("TPs ="+TPs);
 		    System.out.println("ch ="+nChannels);
-		    System.out.println("timeinterval ="+avgTimeLapseInterval);
+		    System.out.println("timeinterval ="+avgTimeLapseInterval);*/
 		    
 		    // --------------------- ok
 		    
@@ -120,7 +119,7 @@ public class ImgPlusFromSlideBookLogFactory {
 			    //	public ExportedSBVirtualStack(String[][] filenames, int width,int height, int nframes, int nchannels, int nzslices) {
 			    
 			    int[] dimensions = ExportedSBVirtualStack.getDimensions(logFile.getParent()+File.separator+fileNames[0][0]);
-			    ExportedSBVirtualStack  myVirtualStack = new ExportedSBVirtualStack(logFile.getParent(),fileNames, dimensions[0], dimensions[0], TPs, nChannels, true);
+			    ExportedSBVirtualStack  myVirtualStack = new ExportedSBVirtualStack(logFile.getParent(),fileNames, dimensions[0], dimensions[0], TPs, nChannels, false);//true);
 		      	System.out.println(myVirtualStack==null);
 		      	//myVirtualStack.setAttachedDataPath(attachedRawDataPrefixFile);
 		      	System.out.println(myVirtualStack==null);
@@ -133,7 +132,7 @@ public class ImgPlusFromSlideBookLogFactory {
 				cal.setTimeUnit("ms");
 				cal.frameInterval=avgTimeLapseInterval;
 				cal.fps = 1000.0/avgTimeLapseInterval;
-				cal.startAcquisitionTime=startAcqu;
+				cal.startAcquisitionTime=endAcqu.minus(Duration.ofMillis((long)avgTimeLapseInterval*(long)TPs));
 				myImpPlus.setCalibration(cal);
 				return myImpPlus;		    	
 		    }
