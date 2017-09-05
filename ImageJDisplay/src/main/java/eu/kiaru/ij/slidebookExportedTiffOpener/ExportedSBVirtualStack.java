@@ -32,14 +32,6 @@ public class ExportedSBVirtualStack extends VirtualStack {
 		NFRAMES=nframes;
 		NCHANNELS=nchannels;
 		NZSLICES=1;
-		
-		System.out.println(FILENAMES);
-		System.out.println(WIDTH);
-		System.out.println(HEIGHT);
-		System.out.println(NFRAMES);
-		System.out.println(NCHANNELS);
-		System.out.println(NZSLICES);
-
 
 		backingImPs = new ImagePlus[NFRAMES][NCHANNELS];
 		

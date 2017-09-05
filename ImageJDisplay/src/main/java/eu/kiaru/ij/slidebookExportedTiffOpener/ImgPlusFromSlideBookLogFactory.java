@@ -14,6 +14,7 @@ import eu.kiaru.ij.controller42.devices42.CustomWFVirtualStack42;
 import eu.kiaru.ij.controller42.devices42.Device42Helper;
 import ij.IJ;
 import ij.ImagePlus;
+import ij.measure.Calibration;
 import ij.plugin.HyperStackConverter;
 
 /*
@@ -127,8 +128,14 @@ public class ImgPlusFromSlideBookLogFactory {
 				ImagePlus myImpPlus = new ImagePlus(logFile.getName(), myVirtualStack);
 				myVirtualStack.setImgPlus(myImpPlus);
 				myImpPlus = HyperStackConverter.toHyperStack(myImpPlus, nChannels, 1, TPs);
-				myImpPlus.show();
-		    	
+				//myImpPlus.show();
+				CalibrationTimeOrigin cal = new CalibrationTimeOrigin();
+				cal.setTimeUnit("ms");
+				cal.frameInterval=avgTimeLapseInterval;
+				cal.fps = 1000.0/avgTimeLapseInterval;
+				cal.startAcquisitionTime=startAcqu;
+				myImpPlus.setCalibration(cal);
+				return myImpPlus;		    	
 		    }
 			//myImpPlus.addImageListener(this);
 	      	

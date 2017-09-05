@@ -11,6 +11,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import eu.kiaru.ij.controller42.structDevice.DefaultSynchronizedDisplayedDevice;
+import eu.kiaru.ij.controller42.structDevice.MyPlot;
 import eu.kiaru.ij.controller42.structDevice.Samplable;
 import eu.kiaru.ij.controller42.structDevice.UniformlySampledSynchronizedDisplayedDevice;
 import ij.ImagePlus;

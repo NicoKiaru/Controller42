@@ -64,23 +64,23 @@ abstract public class UniformlySampledSynchronizedDisplayedDevice<T> extends Def
 	@Override
 	final synchronized public void setDisplayedTime(LocalDateTime time) {
 		if (this.samplingRateInitialized) {
-		// Needs to find the correct image number
-		Duration timeInterval = Duration.between(this.startAcquisitionTime,time);//.dividedBy(numberOfImages-1).toNanos()
-		double timeIntervalInMs = ((timeInterval.getSeconds()*1000)+(timeInterval.getNano())/1e6);
-		long newSampleDisplayed = java.lang.Math.round((double)(timeIntervalInMs/avgTimeBetweenSamplesInMs));
-		
-		//newSampleDisplayed+=1;// because of IJ1 notation style
-		if (newSampleDisplayed<0) {
-			newSampleDisplayed=0;
-		}
-		if (newSampleDisplayed>numberOfSamples) {
-			newSampleDisplayed=numberOfSamples;
-		}
-		if (newSampleDisplayed!=currentSampleIndexDisplayed) {
-			currentSampleIndexDisplayed=newSampleDisplayed;
-			// needs to update the window, if any
-			displayCurrentSample();
-		}
+			// Needs to find the correct image number
+			// Converted to local time since it doesn't work otherwise...
+			Duration timeInterval = Duration.between(this.startAcquisitionTime.toLocalTime(),time.toLocalTime());//.dividedBy(numberOfImages-1).toNanos()
+			double timeIntervalInMs = ((double)(timeInterval.getSeconds()*1000)+(double)((double)(timeInterval.getNano())/1e6));
+			long newSampleDisplayed = java.lang.Math.round((double)(timeIntervalInMs/avgTimeBetweenSamplesInMs));
+			//newSampleDisplayed+=1;// because of IJ1 notation style
+			if (newSampleDisplayed<0) {
+				newSampleDisplayed=0;
+			}
+			if (newSampleDisplayed>numberOfSamples) {
+				newSampleDisplayed=numberOfSamples;
+			}
+			if (newSampleDisplayed!=currentSampleIndexDisplayed) {
+				currentSampleIndexDisplayed=newSampleDisplayed;
+				// needs to update the window, if any
+				displayCurrentSample();
+			}
 		} else {
 			System.out.println("Sampling rate of device "+this.getName()+" not initialized");
 		}

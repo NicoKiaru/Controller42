@@ -1,7 +1,6 @@
 package eu.kiaru.ij.controller42;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -30,6 +29,7 @@ public class DSDevicesSynchronizer implements DeviceListener{
 		if (devicesByName.containsKey(device.getName())) {
 			System.err.println("Error : devices with duplicate names!");
 		}
+		System.out.println("adding"+device.getName());
 		devicesByName.put(device.getName(), device);
 		device.addDeviceListener(this);
 	}
@@ -44,6 +44,7 @@ public class DSDevicesSynchronizer implements DeviceListener{
 	public void deviceTimeChanged(DeviceEvent e) {		
 		//System.out.println("Device "+e.getSource()+" has changed its time.");
 		LocalDateTime broadcastedDate = e.getSource().getCurrentTime();		
+		//System.out.println("It is "+(broadcastedDate.toLocalTime()).toString()+" according to "+e.getSource().getName()+".");
 		for (DefaultSynchronizedDisplayedDevice device : devices) {
 			if ((device.isSynchronized())&&(!device.equals(e.getSource()))) {
 				device.setCurrentTime(broadcastedDate);

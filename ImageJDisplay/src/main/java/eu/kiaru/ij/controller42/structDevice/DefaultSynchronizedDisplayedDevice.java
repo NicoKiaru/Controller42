@@ -46,10 +46,8 @@ abstract public class DefaultSynchronizedDisplayedDevice implements Synchronizab
 
 	@Override
 	public synchronized void setCurrentTime(LocalDateTime date) {
-		// TODO Auto-generated method stub
 		currentTime=date;
-		updateDisplay();
-		
+		updateDisplay();		
 	}
 	
 	private void updateDisplay() {

@@ -24,18 +24,11 @@ import eu.kiaru.ij.controller42.stdDevices.StdDeviceFactory;
 import eu.kiaru.ij.controller42.structDevice.DefaultSynchronizedDisplayedDevice;
 import eu.kiaru.ij.slidebookExportedTiffOpener.ImgPlusFromSlideBookLogFactory;
 import ij.IJ;
+import ij.ImagePlus;
 import ij.WindowManager;
 
 /**
- * This plugin show a minimal example for using JOGL dependency in an IJ Command.
- * Natives loading is failing with JOGL with an ImageJ2 command, as of 15th August 2017
- * see http://forum.imagej.net/t/fiji-command-unable-to-find-jogl-library-minimal-example/6484/28
- *  - > this branch shows how to overcome the problem by executing a dummy groovy script
- *  groovy execution with the proper import is able to load correclty the natives
- *  // TO FIX
- *  It works, but it's ugly, but it works, but it's ugly. 
- *  
- *  Note the JOGLLoader class should be changed for other versions of JOGL (GL3 / GL4...)
+ * Todo
  */
 @Plugin(type = Command.class, menuPath = "Controller 42>Load Experiment")
 public class LoadExperiment implements Command {
@@ -73,17 +66,24 @@ public class LoadExperiment implements Command {
         		synchronizer.addDevice(device);
         		initialized=true;
         	}
-        	if (!initialized) {
-        		System.out.println("alors punaise ?");
+        	/*if (!initialized) {
 	        	device = StdDeviceFactory.getDevice(f);
 	        	if (device!=null) {
 	        		synchronizer.addDevice(device);
 	        		initialized=true;
 	        	}
-	        }
+	        }*/
         	if (!initialized) {
-        		System.out.println("alors punaise ?");
-        		ImgPlusFromSlideBookLogFactory.getImagePlusFromLogFile(f);
+        		ImagePlus imSlideBook = ImgPlusFromSlideBookLogFactory.getImagePlusFromLogFile(f);
+        		if (imSlideBook!=null) {
+        			device = StdDeviceFactory.getDevice(imSlideBook);
+    	        	if (device!=null) {
+    	        		synchronizer.addDevice(device);
+    	        		initialized=true;
+    	        	} else {
+    	        		System.out.println("ah bah c'est null ici");
+    	        	}
+        		}
 	        	/*device = StdDeviceFactory.getDevice(f);
 	        	if (device!=null) {
 	        		synchronizer.addDevice(device);
