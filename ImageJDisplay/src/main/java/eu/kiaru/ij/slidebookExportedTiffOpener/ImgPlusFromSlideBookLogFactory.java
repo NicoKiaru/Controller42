@@ -6,10 +6,15 @@ import java.io.FileReader;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import eu.kiaru.ij.controller42.devices42.CustomWFVirtualStack42;
 import eu.kiaru.ij.controller42.devices42.Device42Helper;
+import ij.IJ;
 import ij.ImagePlus;
+import ij.plugin.HyperStackConverter;
 
 /*
  * Export Date-Time: 08/28/2017 10:26:32
@@ -30,34 +35,104 @@ public class ImgPlusFromSlideBookLogFactory {
 		BufferedReader reader;
 		try {
 			reader = new BufferedReader(new FileReader(logFile.getAbsolutePath()));
-		    reader.readLine(); // skips export date time
-		    String lSX = reader.readLine(); // image size X
-		    if (lSX.startsWith("Image Size X (pixels) =")) {
-		    	imgSX = Integer.parseInt(lSX.substring("Image Size X (pixels) =".length()).trim());
-		    }
-		    String lSY = reader.readLine(); // image size Y
-		    if (lSY.startsWith("Image Size Y (pixels) =")) {
-		    	imgSY = Integer.parseInt(lSY.substring("Image Size Y (pixels) =".length()).trim());
-		    }
-		    for (int i=0;i<4;i++) {
-		    	reader.readLine();
-		    }
+		    String line = reader.readLine(); // skips export date time
 		    
-		    String firstLine=reader.readLine();
-		    if (firstLine==null) {
-		    	System.err.println("Could not find proper camera information... in device "+this.getName());
-		    	reader.close();
-		    	return;
+		    //Capture Date-Time: 8/25/2017 11:28:13
+		    line = reader.readLine();
+		    if (!line.startsWith("Capture Date-Time:")) return null;
+		    line = line.substring("Capture Date-Time:".length());
+		    LocalDateTime startAcqu = fromLogFileLine(line);
+		    System.out.println(startAcqu);
+		    
+		    line = reader.readLine();
+		    if (!line.startsWith("Z Planes:")) return null;
+		    line = line.substring("Z Planes:".length()).trim();
+		    int zPlanes = Integer.parseInt(line);
+		    
+		    line = reader.readLine();
+		    if (!line.startsWith("Time Points:")) return null;
+		    line = line.substring("Time Points:".length()).trim();
+		    int TPs = Integer.parseInt(line);
+		    
+		    line = reader.readLine();
+		    if (!line.startsWith("Channels:")) return null;
+		    line = line.substring("Channels:".length()).trim();
+		    int nChannels = Integer.parseInt(line);
+		    
+		    line=reader.readLine(); // skip micron per pixel
+		    line=reader.readLine(); // skip zsteps
+		    
+		    line = reader.readLine();
+		    if (!line.startsWith("Average Timelapse Interval:")) {
+		    	System.err.println("Slidebook ZStack export unsupported");
+		    	return null;
 		    }
-		    String lastLine = "";
-		    String sCurrentLine;
-		    int nSamples=1;
-		    while ((sCurrentLine = reader.readLine()) != null) 
-		    {
-		        lastLine = sCurrentLine;
-		        nSamples++;
+		    line = line.substring("Average Timelapse Interval:".length());
+		    line = line.substring(0, line.indexOf("ms")).trim();
+		    double avgTimeLapseInterval = Double.parseDouble(line);
+		    
+		    System.out.println(startAcqu);
+		    System.out.println("zp ="+zPlanes);
+		    System.out.println("TPs ="+TPs);
+		    System.out.println("ch ="+nChannels);
+		    System.out.println("timeinterval ="+avgTimeLapseInterval);
+		    
+		    // --------------------- ok
+		    
+		    //* IFD	X Position (um)	Y Position (um)	Z Position (um)	Elapsed Time (ms)	Channel Name	TIFF File Name
+		    //* 0	0	0	7084.85	0	c488s	Capture 5_XY1503653285_Z0_T0_C0.tiff
+		    //* 0	0	0	7084.85	0	c561s	Capture 5_XY1503653285_Z0_T0_C1.tiff
+		    //* 0	0	0	7084.85	0	C640s	Capture 5_XY1503653285_Z0_T0_C2.tiff
+		    line = reader.readLine();
+		    Map<String, Integer> infoKeys = new HashMap<>();
+		    String [] colTitles = line.split("\t");
+		    for (int i=0;i<colTitles.length;i++) {
+		    	infoKeys.put(colTitles[i], i);
+		    	System.out.println(colTitles[i]);
 		    }
-		    LocalTime timeIni = Device42Helper.fromCameraLogLine(firstLine);//.LocalTime.parse(firstLine,formatter);			    
+		    //ArrayList<String> fName = new ArrayList<>();
+		    String[][] fileNames = new String[TPs][nChannels];
+		    Map<String,Integer> channelIndex = new HashMap<>();
+		    int currentChannelIndex=0;
+		    int frame=0;
+		    int globalIndex=0;
+		    if (zPlanes!=1) {
+		    	System.err.println("Slidebook ZStack export unsupported");
+		    	return null;
+
+		    } else {
+			    while ((line=reader.readLine())!=null) {
+			    	System.out.println(line);
+			    	int channel;
+			    	String [] lineInfo = line.split("\t");
+			    	String cChannel = lineInfo[infoKeys.get("Channel Name")];
+			    	if (!channelIndex.containsKey(cChannel)) {
+			    		channelIndex.put(cChannel, currentChannelIndex);
+			    		currentChannelIndex++;		    		
+			    	}
+			    	channel = channelIndex.get(cChannel);
+			    	fileNames[frame][channel] = lineInfo[infoKeys.get("TIFF File Name")];
+			    	globalIndex++;
+			    	if ((globalIndex % nChannels)==0) frame++;
+			    }
+			    
+			    //	public ExportedSBVirtualStack(String[][] filenames, int width,int height, int nframes, int nchannels, int nzslices) {
+			    
+			    int[] dimensions = ExportedSBVirtualStack.getDimensions(logFile.getParent()+File.separator+fileNames[0][0]);
+			    ExportedSBVirtualStack  myVirtualStack = new ExportedSBVirtualStack(logFile.getParent(),fileNames, dimensions[0], dimensions[0], TPs, nChannels, true);
+		      	System.out.println(myVirtualStack==null);
+		      	//myVirtualStack.setAttachedDataPath(attachedRawDataPrefixFile);
+		      	System.out.println(myVirtualStack==null);
+			    
+				ImagePlus myImpPlus = new ImagePlus(logFile.getName(), myVirtualStack);
+				myVirtualStack.setImgPlus(myImpPlus);
+				myImpPlus = HyperStackConverter.toHyperStack(myImpPlus, nChannels, 1, TPs);
+				myImpPlus.show();
+		    	
+		    }
+			//myImpPlus.addImageListener(this);
+	      	
+		    /*LocalTime timeIni = Device42Helper.fromCameraLogLine(firstLine);//.LocalTime.parse(firstLine,formatter);			    
 		    LocalTime timeEnd = null;
 		   	double avgTimeBetweenImagesInMs = 1;
 		   	if (!lastLine.equals("")) {
@@ -77,13 +152,53 @@ public class ImgPlusFromSlideBookLogFactory {
 	      	myVirtualStack = new CustomWFVirtualStack42(imgSX, imgSY, this.getNumberOfSamples(), null, null);
 	      	System.out.println(myVirtualStack==null);
 	      	myVirtualStack.setAttachedDataPath(attachedRawDataPrefixFile);
-	      	System.out.println(myVirtualStack==null);
+	      	System.out.println(myVirtualStack==null);*/
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
+		}	
 		
 		return null;
 	}
+	
+	// Because slidebook export is stupidly formatted
+	static public LocalDateTime fromLogFileLine(String str) {
+		//8/25/2017 11:28:13
+		// HORRIBLE !!!
+		//int currentIndex=0;
+		int nextIndex = str.indexOf("/");		
+		String month = str.substring(0, nextIndex);
+		str=str.substring(nextIndex+1, str.length());
+		
+	   	nextIndex = str.indexOf("/");
+		String day = str.substring(0, nextIndex);
+		str=str.substring(nextIndex+1, str.length());
+
+		nextIndex = str.indexOf(" ");
+		String year = str.substring(0, nextIndex);
+		str=str.substring(nextIndex+1, str.length());
+
+		nextIndex = str.indexOf(":");
+		String hour = str.substring(0, nextIndex);
+		str=str.substring(nextIndex+1, str.length());
+
+		nextIndex = str.indexOf(":");
+		String minute = str.substring(0, nextIndex);
+		str=str.substring(nextIndex+1, str.length());
+
+		String second = str;
+			
+		int y = Integer.parseInt(year.trim());
+		int M = Integer.parseInt(month.trim());
+		int d = Integer.parseInt(day.trim());
+			
+		int h = Integer.parseInt(hour.trim());
+		int m = Integer.parseInt(minute.trim());
+		double ds = Double.parseDouble(second.trim());
+		int s =(int)ds;
+		ds=ds-(int)ds;
+		int ns = (int)(ds*1e9);
+		return LocalDateTime.of(y,M,d,h,m,s,ns);
+	}
+	
 }

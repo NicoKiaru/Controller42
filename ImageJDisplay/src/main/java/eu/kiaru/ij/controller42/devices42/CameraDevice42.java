@@ -106,7 +106,11 @@ public class CameraDevice42 extends ImagePlusDeviceUniformlySampled {
 
 	@Override
 	public void initDisplay() {
-		if (myVirtualStack==null) {System.out.println("prout");}
+		if (myVirtualStack==null) {
+			System.err.println("Virtual stack not initialized for device "+this.getName());
+			System.err.println("Cannot display WF image.");
+			return;
+		}
 		myImpPlus = new ImagePlus(this.getName(), myVirtualStack);
 		myImpPlus.addImageListener(this);
 	}

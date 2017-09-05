@@ -22,6 +22,7 @@ import org.scijava.ui.UIService;
 import eu.kiaru.ij.controller42.devices42.Device42Factory;
 import eu.kiaru.ij.controller42.stdDevices.StdDeviceFactory;
 import eu.kiaru.ij.controller42.structDevice.DefaultSynchronizedDisplayedDevice;
+import eu.kiaru.ij.slidebookExportedTiffOpener.ImgPlusFromSlideBookLogFactory;
 import ij.IJ;
 import ij.WindowManager;
 
@@ -55,9 +56,9 @@ public class LoadExperiment implements Command {
         uiService.show("Directory : "+myDir.getAbsolutePath());
         File[] files = myDir.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
-                return (name.toLowerCase().endsWith(".log")
-                	  ||name.toLowerCase().endsWith(".tif")
-                	  ||name.toLowerCase().endsWith(".tiff"));
+                return (name.toLowerCase().endsWith(".log"));
+                	  //||name.toLowerCase().endsWith(".tif")
+                	  //||name.toLowerCase().endsWith(".tiff"));
             }
         });
         
@@ -79,6 +80,15 @@ public class LoadExperiment implements Command {
 	        		synchronizer.addDevice(device);
 	        		initialized=true;
 	        	}
+	        }
+        	if (!initialized) {
+        		System.out.println("alors punaise ?");
+        		ImgPlusFromSlideBookLogFactory.getImagePlusFromLogFile(f);
+	        	/*device = StdDeviceFactory.getDevice(f);
+	        	if (device!=null) {
+	        		synchronizer.addDevice(device);
+	        		initialized=true;
+	        	}*/
 	        }
         }   
 

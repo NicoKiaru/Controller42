@@ -15,7 +15,7 @@ import org.apache.commons.io.IOUtils;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
-public class CustomWFVirtualStack42 extends VirtualStack implements PlugIn {
+public class CustomWFVirtualStack42 extends VirtualStack {//implements PlugIn {
 	final int WIDTH; //= 512;
 	final int HEIGHT; //= 512;
 	//final int SIZE; = 100;*/
@@ -35,11 +35,11 @@ public class CustomWFVirtualStack42 extends VirtualStack implements PlugIn {
 	int currentFileIndex=-1;
 	
 
-	public void run(String arg) {
+	/*public void run(String arg) {
 		ImageStack stack = new CustomWFVirtualStack42(WIDTH, HEIGHT, 100, null, null);
 		ImagePlus imp = new ImagePlus("Empty Virtual Stack", stack);
 		imp.show();
-	}
+	}*/
 	
 	public CustomWFVirtualStack42(int width, int height, int nSlices, ColorModel cm, String path) {
 		super(width, height, cm, path);
