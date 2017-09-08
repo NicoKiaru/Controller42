@@ -1,5 +1,7 @@
 package eu.kiaru.ij.controller42.stdDevices;
 
+// file copied from 
+
 /*
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
@@ -25,8 +27,23 @@ package eu.kiaru.ij.controller42.stdDevices;
  * #L%
  */
 
+
 import java.util.Arrays;
 
+import loci.common.DateTools;
+import loci.common.services.ServiceFactory;
+import loci.formats.FormatReader;
+import loci.formats.IFormatReader;
+import loci.formats.ImageReader;
+import loci.formats.meta.IMetadata;
+import loci.formats.services.OMEXMLService;
+
+import ome.xml.model.primitives.NonNegativeInteger;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
+
+/*
 import loci.common.DateTools;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatReader;
@@ -40,7 +57,7 @@ import loci.formats.services.OMEXMLService;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
-
+*/
 /**
  * Uses Bio-Formats to extract timestamp information
  * in a format-independent manner from a dataset.
@@ -82,7 +99,7 @@ public class bioformattest {
       System.out.println("\tCreation time (in ms since epoch) = " +
         DateTools.getTime(creationDate, DateTools.ISO8601_FORMAT));
     }
-    System.out.println("\tTime increment (in seconds) = " + timeInc.value(UNITS.SECOND).doubleValue());
+    System.out.println("\tTime increment (in seconds) = " + timeInc.value(UNITS.SECOND));
   }
 
   /** Outputs timing details per timepoint. */
@@ -137,6 +154,7 @@ public class bioformattest {
     }*/
     String id = null;//args[0];//
     id="/home/nico/Dropbox/NicoWork/Controller42/ExampleData/Exp_0/Capture 5_XY1503653285_Z0_T0_C0.tiff";//args[0];
+    id="E:\\Dropbox\\NicoWork\\Controller42\\ExampleData\\Exp_0\\Capture 5_XY1503653285_Z0_T0_C0.tiff";
     int series = args.length > 1 ? Integer.parseInt(args[1]) : 0;
 
     // enable debugging
@@ -152,7 +170,7 @@ public class bioformattest {
 
     // create format reader
     IFormatReader reader = new ImageReader();
-    reader.setMetadataStore((MetadataStore) meta);
+    reader.setMetadataStore(meta);
 
     // initialize file
     System.out.println("Initializing " + id);
