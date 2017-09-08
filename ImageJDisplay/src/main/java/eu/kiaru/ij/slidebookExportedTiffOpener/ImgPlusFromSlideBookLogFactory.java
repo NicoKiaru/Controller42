@@ -119,7 +119,7 @@ public class ImgPlusFromSlideBookLogFactory {
 			    //	public ExportedSBVirtualStack(String[][] filenames, int width,int height, int nframes, int nchannels, int nzslices) {
 			    
 			    int[] dimensions = ExportedSBVirtualStack.getDimensions(logFile.getParent()+File.separator+fileNames[0][0]);
-			    ExportedSBVirtualStack  myVirtualStack = new ExportedSBVirtualStack(logFile.getParent(),fileNames, dimensions[0], dimensions[0], TPs, nChannels, false);//true);
+			    ExportedSBVirtualStack  myVirtualStack = new ExportedSBVirtualStack(logFile.getParent(),fileNames, dimensions[0], dimensions[0], TPs, nChannels, false);
 		      	System.out.println(myVirtualStack==null);
 		      	//myVirtualStack.setAttachedDataPath(attachedRawDataPrefixFile);
 		      	System.out.println(myVirtualStack==null);
@@ -132,7 +132,7 @@ public class ImgPlusFromSlideBookLogFactory {
 				cal.setTimeUnit("ms");
 				cal.frameInterval=avgTimeLapseInterval;
 				cal.fps = 1000.0/avgTimeLapseInterval;
-				cal.startAcquisitionTime=endAcqu.minus(Duration.ofMillis((long)avgTimeLapseInterval*(long)TPs));
+				cal.startAcquisitionTime=endAcqu.minus(Duration.ofMillis((long)avgTimeLapseInterval*(long)(TPs-1)));
 				myImpPlus.setCalibration(cal);
 				return myImpPlus;		    	
 		    }

@@ -44,7 +44,7 @@ public class DSDevicesSynchronizer implements DeviceListener{
 	public void deviceTimeChanged(DeviceEvent e) {		
 		//System.out.println("Device "+e.getSource()+" has changed its time.");
 		LocalDateTime broadcastedDate = e.getSource().getCurrentTime();		
-		System.out.println("It is "+(broadcastedDate.toLocalTime()).toString()+" according to "+e.getSource().getName()+".");
+		//System.out.println("It is "+(broadcastedDate.toLocalTime()).toString()+" according to "+e.getSource().getName()+".");
 		for (DefaultSynchronizedDisplayedDevice device : devices) {
 			if ((device.isSynchronized())&&(!device.equals(e.getSource()))) {
 				device.setCurrentTime(broadcastedDate);

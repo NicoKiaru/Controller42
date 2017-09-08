@@ -70,17 +70,23 @@ abstract public class UniformlySampledSynchronizedDisplayedDevice<T> extends Def
 			double timeIntervalInMs = ((double)(timeInterval.getSeconds()*1000)+(double)((double)(timeInterval.getNano())/1e6));
 			long newSampleDisplayed = java.lang.Math.round((double)(timeIntervalInMs/avgTimeBetweenSamplesInMs));
 			//newSampleDisplayed+=1;// because of IJ1 notation style
+			boolean outOfBounds=false;
 			if (newSampleDisplayed<0) {
 				newSampleDisplayed=0;
-			}
+				outOfBounds=true;
+			} else
 			if (newSampleDisplayed>numberOfSamples) {
 				newSampleDisplayed=numberOfSamples;
-			}
+				outOfBounds=true;
+			} 
+			
+			// makeDisplayVisible / makeDisplayinvisible
 			if (newSampleDisplayed!=currentSampleIndexDisplayed) {
 				currentSampleIndexDisplayed=newSampleDisplayed;
 				// needs to update the window, if any
 				displayCurrentSample();
 			}
+			
 		} else {
 			System.out.println("Sampling rate of device "+this.getName()+" not initialized");
 		}
