@@ -85,22 +85,25 @@ public class bioformattest {
 
   /** Outputs global timing details. */
   public static void printGlobalTiming(IMetadata meta, int series) {
-    String imageName = meta.getImageName(series);
-    String creationDate = null;
-    if (meta.getImageAcquisitionDate(series) != null) {
-      creationDate = meta.getImageAcquisitionDate(series).getValue();
-    }
-    Time timeInc = meta.getPixelsTimeIncrement(series);
-    System.out.println();
-    System.out.println("Global timing information:");
-    System.out.println("\tImage name = " + imageName);
-    System.out.println("\tCreation date = " + creationDate);
-    if (creationDate != null) {
-      System.out.println("\tCreation time (in ms since epoch) = " +
-        DateTools.getTime(creationDate, DateTools.ISO8601_FORMAT));
-    }
-    System.out.println("\tTime increment (in seconds) = " + timeInc.value(UNITS.SECOND));
-  }
+	    String imageName = meta.getImageName(series);
+	    String creationDate = null;
+	    if (meta.getImageAcquisitionDate(series) != null) {
+	      creationDate = meta.getImageAcquisitionDate(series).getValue();
+	    }
+	    Time timeInc = meta.getPixelsTimeIncrement(series);
+	    
+	    System.out.println();
+	    System.out.println("Global timing information:");
+	    System.out.println("\tImage name = " + imageName);
+	    System.out.println("\tCreation date = " + creationDate);
+	    if (creationDate != null) {
+	      System.out.println("\tCreation time (in ms since epoch) = " +
+	        DateTools.getTime(creationDate, DateTools.ISO8601_FORMAT));
+	    }
+	    if (timeInc!=null) {
+	    	System.out.println("\tTime increment (in seconds) = " + timeInc.value(UNITS.SECOND).doubleValue());
+	    }
+	}
 
   /** Outputs timing details per timepoint. */
   public static void printTimingPerTimepoint(IMetadata meta, int series) {
@@ -154,7 +157,7 @@ public class bioformattest {
     }*/
     String id = null;//args[0];//
     id="/home/nico/Dropbox/NicoWork/Controller42/ExampleData/Exp_0/Capture 5_XY1503653285_Z0_T0_C0.tiff";//args[0];
-    id="E:\\Dropbox\\NicoWork\\Controller42\\ExampleData\\Exp_0\\Capture 5_XY1503653285_Z0_T0_C0.tiff";
+    //id="E:\\Dropbox\\NicoWork\\Controller42\\ExampleData\\Exp_0\\Capture 5_XY1503653285_Z0_T0_C0.tiff";
     int series = args.length > 1 ? Integer.parseInt(args[1]) : 0;
 
     // enable debugging

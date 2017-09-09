@@ -29,7 +29,6 @@ public class DSDevicesSynchronizer implements DeviceListener{
 		if (devicesByName.containsKey(device.getName())) {
 			System.err.println("Error : devices with duplicate names!");
 		}
-		System.out.println("adding"+device.getName());
 		devicesByName.put(device.getName(), device);
 		device.addDeviceListener(this);
 	}

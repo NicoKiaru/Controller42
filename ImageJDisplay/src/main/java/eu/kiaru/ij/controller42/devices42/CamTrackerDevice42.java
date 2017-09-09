@@ -177,13 +177,11 @@ public class CamTrackerDevice42 extends UniformlySampledSynchronizedDisplayedDev
 
 	@Override
 	public float[] getSample(int n) {
-		// TODO Auto-generated method stub
 		return new float[] {posData[0][n],posData[1][n],posData[2][n],posData[3][n]};
 	}
 
 	@Override
 	public void displayCurrentSample() {
-		// TODO Auto-generated method stub
 		long currentSampleDisplayed=this.getCurrentSampleIndexDisplayed();
 		double[] range = plotChartX.plot.getLimits(); // xmin xmax ymin ymax
 		double width = range[1]-range[0];
@@ -193,8 +191,7 @@ public class CamTrackerDevice42 extends UniformlySampledSynchronizedDisplayedDev
 		range = plotChartY.plot.getLimits(); // xmin xmax ymin ymax
 		width = range[1]-range[0];
 		plotChartY.plot.setLimits(currentSampleDisplayed-width/2.0, currentSampleDisplayed+width/2.0, range[2], range[3]);
-		plotChartY.checkLineAtCurrentLocation(currentSampleDisplayed);
-		
+		plotChartY.checkLineAtCurrentLocation(currentSampleDisplayed);		
 	}
 
 }

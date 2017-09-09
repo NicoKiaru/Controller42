@@ -17,7 +17,7 @@ public class MyPlot {
 		
 	}
 	
-	public void checkLineAtCurrentLocation(long n) {
+	public void checkLineAtCurrentLocation(double n) {
 		if (lineCurrentTime==null) {			
 			ij.gui.Roi.setColor(new Color(150,50,50));
 			ij.gui.Line.setWidth(2);
