@@ -76,8 +76,4 @@ public class ZaberDevice42V1 extends ZaberDevice42 {
 
 }
 
-class ZaberEvent {
-	LocalTime eventDate;
-	String eventType;
-	Float property;
-}
+

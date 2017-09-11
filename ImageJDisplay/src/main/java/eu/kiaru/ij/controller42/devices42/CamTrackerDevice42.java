@@ -32,6 +32,7 @@ public class CamTrackerDevice42 extends UniformlySampledSynchronizedDisplayedDev
 		    int imgSX=-1;
 		    int imgSY=-1;
 		    String line = reader.readLine(); // image size X
+		    if (!line.startsWith("Linked to ")) {line = reader.readLine();}
 		    if (line.startsWith("Linked to ")) {
 		    	linkedCamName = line.substring("Linked to ".length()).trim();
 		    }
@@ -43,6 +44,12 @@ public class CamTrackerDevice42 extends UniformlySampledSynchronizedDisplayedDev
 	}
 
 	void skipHeader(BufferedReader reader) throws IOException {
+		System.out.println(logVersion);
+		if (logVersion==3) {
+			for (int i=0;i<11;i++) {
+		    	reader.readLine();
+			}
+		}
 		if (logVersion==2) {
 			 for (int i=0;i<10;i++) {
 			    	reader.readLine();

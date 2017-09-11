@@ -29,6 +29,21 @@ public class CameraDevice42 extends ImagePlusDeviceUniformlySampled {
 	 * (non-Javadoc)
 	 * @see eu.kiaru.ij.controller42.DefaultSynchronizedDisplayedDevice#removeDisplay()
 	 */
+	/*
+	 *============
+	 *Log file for device CAMERA_GUPPY
+	 *File created on (yy-mm-dd) 17-09-11 at 11h49m58.147s
+	 *Type CAMERA
+	 *Version 3.0
+	 *Camera Informations
+	 *	TIME_START=2017,9,11,11,49,58.148000
+	 *Image Size X (pixels) = 780
+	 *Image Size Y (pixels) = 582
+	 *First Image is the current Background
+	 *Data are written as follows:
+	 *FrameNumber	Hour	Minute	Seconds
+	 *============ 
+	 */
 	CustomWFVirtualStack42 myVirtualStack;	
 	
 	@Override
@@ -38,7 +53,7 @@ public class CameraDevice42 extends ImagePlusDeviceUniformlySampled {
 		try {
 			reader = new BufferedReader(new FileReader(this.logFile.getAbsolutePath()));
 		    // Skips header
-		    for (int i=0;i<5;i++) {
+		    for (int i=0;i<7;i++) {
 		    	reader.readLine();
 		    }
 		    int imgSX=-1;

@@ -23,8 +23,8 @@ public class Device42Helper {
 	private static final Map<String, Class> devices42Map;
     static {
         Map<String, Class> iMap = new HashMap<>();
-        iMap.put("Aladdin", null);
-        iMap.put("CamTracker", CamTrackerDevice42.class);
+        iMap.put("ALADDIN", null);
+        iMap.put("TRACKER", CamTrackerDevice42.class);
         iMap.put("MP_285", null);
         iMap.put("NikonTIControl", null);
         iMap.put("Shutter", null);
@@ -33,9 +33,9 @@ public class Device42Helper {
         iMap.put("Tracker", null);
         iMap.put("Tracker_Focus", null);
         iMap.put("UserNotification", null);
-        iMap.put("Zaber", ZaberDevice42.class);
+        iMap.put("ZABER", ZaberDevice42.class);
         iMap.put("ZDrive_Nikon", null);
-        iMap.put("Camera", CameraDevice42.class);
+        iMap.put("CAMERA", CameraDevice42.class);
         devices42Map = Collections.unmodifiableMap(iMap);
     }
     
@@ -156,15 +156,18 @@ public class Device42Helper {
 					System.out.println("\t Log File created on "+strDate);
 					LocalDateTime startTime = fromLogFileLine(strDate);//LocalDateTime.parse(strDate,formatter);		   	  		   	  
 		    	line = reader.readLine(); // line 4 -> device type
-		    		String deviceTypeName = line.trim().substring(defautHeaderDevice42Line4Prefix.length()).trim();
+		    		String deviceTypeName = line.trim().substring(defautHeaderDevice42Line4Prefix.length()).trim();		    		
 		    		Class deviceClass= devices42Map.get(deviceTypeName);
 		    		if (deviceClass==null) {
-		    			System.out.println("Currently Unsupported]");
+		    			System.out.println("Currently Unsupported");
 		    			return null;
 		    		}
+		    	line = reader.readLine(); // line 4 -> device type		    	
+		    		String strVersion = line.trim().substring(defautHeaderDevice42Line5Prefix.length()).trim();
+		    		
 				device = (DefaultSynchronizedDisplayedDevice) deviceClass.newInstance();
-				device.setName(deviceName);
-				device.initDevice(path,2);
+				device.setName(deviceName);				
+				device.initDevice(path,(int)(Float.parseFloat(strVersion)));
 				device.startAcquisitionTime=startTime;
 			    device.initDevice();			    
 			    return device;
