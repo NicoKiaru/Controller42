@@ -581,7 +581,7 @@ classdef Camera_Device < Device
         % ----- Functions to handle Tracker Devices, to enable live object
         % Tracking
         function addTrackerDevice(self,hTD)
-	    hTD.SetNameLink --- todo
+            hTD.setLinkedDeviceName(self.deviceName);
             self.trackers{length(self.trackers)+1}=hTD;
             set(0, 'CurrentFigure', self.hDeviceGUI);
             self.trackers{length(self.trackers)}.initDisplayedRect(self.imageSize(2),self.imageSize(1));

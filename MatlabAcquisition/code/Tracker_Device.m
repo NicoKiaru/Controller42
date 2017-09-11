@@ -35,6 +35,7 @@ classdef Tracker_Device < Device
         liveGraph;
         
         % ---- tracking parameter
+        linkedDeviceName; % linked device name normally camera
         tr_value;       % treshold in gray value
         level_above;    % defines if mask = value above or below treshold?
         fillHoles;      % fill Holes within mask before tracking?
@@ -374,10 +375,14 @@ classdef Tracker_Device < Device
             rect=[self.startX self.startY (self.endX-self.startX) (self.endY-self.startY)];
         end
         
+        function setLinkedDeviceName(self,name)
+            self.linkedDeviceName=name;
+        end
+        
         % ----- [Derived from Device class]
         %   - Writes
         function writeLogHeader(self)
-            fprintf(self.hLogFile, ['Linked to ' char(13)]);
+            fprintf(self.hLogFile, ['Linked to ' self.linkedDeviceName char(13)]);
             fprintf(self.hLogFile, ['Position is in pixel size.' char(13)]);
             fprintf(self.hLogFile, ['Above:' num2str(self.level_above) char(13)]);
             fprintf(self.hLogFile, ['Treshold:' num2str(self.tr_value) char(13)]);
