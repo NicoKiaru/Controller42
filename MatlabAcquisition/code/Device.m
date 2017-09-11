@@ -109,10 +109,11 @@ classdef Device < handle
             % All checks performed, recording occurs
             self.isRecording=1;
             str=['============' char(13)];            
-            str=[str 'TYPE = ' self.deviceType char(13)];
             str=[str 'Log file for device ' self.deviceName char(13)];
             t=clock;
             str=[str 'File created on (yy-mm-dd) ' datestr(now, 'yy-mm-dd') ' at ' num2str(t(4)) 'h' num2str(t(5)) 'm' num2str(t(6)) 's' char(13)];
+            str=[str 'Type ' self.deviceType char(13)];
+            str=[str 'Version 3.0' char(13)];
             fwrite(self.hLogFile,str);
             self.writeLogHeader(); % Writes log file header
             self.startDevAcqu();

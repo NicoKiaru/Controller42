@@ -377,6 +377,7 @@ classdef Tracker_Device < Device
         % ----- [Derived from Device class]
         %   - Writes
         function writeLogHeader(self)
+            fprintf(self.hLogFile, ['Linked to ' char(13)]);
             fprintf(self.hLogFile, ['Position is in pixel size.' char(13)]);
             fprintf(self.hLogFile, ['Above:' num2str(self.level_above) char(13)]);
             fprintf(self.hLogFile, ['Treshold:' num2str(self.tr_value) char(13)]);

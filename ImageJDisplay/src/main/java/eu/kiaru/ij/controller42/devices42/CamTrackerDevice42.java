@@ -1,39 +1,12 @@
 package eu.kiaru.ij.controller42.devices42;
 
-import java.awt.Dimension;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-
-import eu.kiaru.ij.controller42.structDevice.DefaultSynchronizedDisplayedDevice;
 import eu.kiaru.ij.controller42.structDevice.MyPlot;
-import eu.kiaru.ij.controller42.structDevice.Samplable;
 import eu.kiaru.ij.controller42.structDevice.UniformlySampledSynchronizedDisplayedDevice;
-import ij.ImagePlus;
-import ij.gui.Line;
 import ij.gui.Plot;
-/*
- * ============
- * Log file for device BEAD_TRACKER
- * File created on (yy-mm-dd) 17-08-25 at 11h13m21.393s
- * Type CamTracker
- * Linked to CAMERA_GUPPY
- * Position is in pixel size.
- * Above:0
- * Treshold:145.92
- * Data:	Xr 	Yr 	X absolute	Y absolute
- * ============
- * Track Pos	22.438	7.4319	401.438	267.4319
- * Track Pos	21.3871	7.7377	400.3871	267.7377
- * Track Pos	20.7039	9.0735	399.7039	269.0735
- * Track Pos	20.7582	9.5194	399.7582	269.5194
- */
-import ij.process.ImageProcessor;
 
 
 public class CamTrackerDevice42 extends UniformlySampledSynchronizedDisplayedDevice<float[]> {
@@ -59,8 +32,8 @@ public class CamTrackerDevice42 extends UniformlySampledSynchronizedDisplayedDev
 		    int imgSX=-1;
 		    int imgSY=-1;
 		    String line = reader.readLine(); // image size X
-		    if (line.startsWith("Linked to")) {
-		    	linkedCamName = line.substring("Linked to".length()).trim();
+		    if (line.startsWith("Linked to ")) {
+		    	linkedCamName = line.substring("Linked to ".length()).trim();
 		    }
 		   	reader.close();
 		} catch (Exception e) {

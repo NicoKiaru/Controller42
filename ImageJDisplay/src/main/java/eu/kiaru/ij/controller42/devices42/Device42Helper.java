@@ -17,7 +17,8 @@ public class Device42Helper {
 	public static String defautHeaderDevice42Line1       = "============";
 	public static String defautHeaderDevice42Line2Prefix = "Log file for device";
 	public static String defautHeaderDevice42Line3Prefix = "File created on (yy-mm-dd)";
-	public static String defautHeaderDevice42Line4Prefix = "Type";
+	public static String defautHeaderDevice42Line4Prefix = "Type ";
+	public static String defautHeaderDevice42Line5Prefix = "Version ";
 	
 	private static final Map<String, Class> devices42Map;
     static {
