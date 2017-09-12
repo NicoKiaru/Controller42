@@ -5,6 +5,8 @@ Il s’agit d’un logiciel permettant de contrôler différents appareils (pous
 L'acquisition se fait en Matlab.
 La visualization des données s'effectue sous ImageJ (en cours...).
 
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/6Fa23DvvOuM/0.jpg)](https://www.youtube.com/watch?v=6Fa23DvvOuM)
+
 L’avantage de ce logiciel réside dans son aspect modulaire et dans la standardisation de la gestion des « devices ». Lors du démarrage d’une acquisition, tous les devices générent au moins un fichier texte de type device_name_log.txt, qui contient toutes les informations d’état ou de changement d’état du device, en précisant l’heure de chaque évènement. Pour les devices nécessitant plusieurs types de fichiers, par exemple pour une l’acquisition vidéo par une caméra, un fichier vidéo est créé en parallele.
 
 Ce projet contient l’équivalent de « drivers » pour les modules suivants:
