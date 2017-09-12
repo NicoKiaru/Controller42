@@ -38,18 +38,13 @@ public class ZaberDevice42 extends DefaultSynchronizedDisplayedDevice {
 
 	@Override
 	public void initDisplay() {
-		System.out.println("initDisplay called in ZaberDevice");
-		// TODO Auto-generated method stub
 		plotChartZ = new MyPlot();
 		plotChartZ.plot = new Plot(this.getName()+"_Z",
 				"Time","PositionZ",dataTinS,dataZinMM);		
-		
 	}
 
 	@Override
 	public void closeDisplay() {
-		// TODO Auto-generated method stub
-
 		plotChartZ.plot.getImagePlus().close();	
 		
 	}

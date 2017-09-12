@@ -29,7 +29,6 @@ public class ZaberDevice42V1 extends ZaberDevice42 {
 		    	int minute = Integer.parseInt(parts[1]);
 		    	double second = Double.parseDouble(parts[2]);
 		    	int nano = (int)((second - ((int)second))*1e9);
-		    	System.out.println("nano="+nano);
 		    	LocalTime timeEvt = LocalTime.of(hour, minute, (int) second, nano);
 		    	evt.eventDate=timeEvt;
 		    	evt.eventType=parts[3];

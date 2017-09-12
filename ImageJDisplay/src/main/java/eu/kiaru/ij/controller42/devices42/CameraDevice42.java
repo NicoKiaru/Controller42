@@ -53,15 +53,19 @@ public class CameraDevice42 extends ImagePlusDeviceUniformlySampled {
 		try {
 			reader = new BufferedReader(new FileReader(this.logFile.getAbsolutePath()));
 		    // Skips header
-		    for (int i=0;i<7;i++) {
+		    for (int i=0;i<5;i++) {
 		    	reader.readLine();
 		    }
+		    if (this.logVersion>2) {reader.readLine();reader.readLine();}
+		    
 		    int imgSX=-1;
 		    int imgSY=-1;
 		    String lSX = reader.readLine(); // image size X
 		    if (lSX.startsWith("Image Size X (pixels) =")) {
 		    	imgSX = Integer.parseInt(lSX.substring("Image Size X (pixels) =".length()).trim());
 		    }
+		    System.out.println("sx="+imgSX);
+		    System.out.println(lSX);
 		    String lSY = reader.readLine(); // image size Y
 		    if (lSY.startsWith("Image Size Y (pixels) =")) {
 		    	imgSY = Integer.parseInt(lSY.substring("Image Size Y (pixels) =".length()).trim());

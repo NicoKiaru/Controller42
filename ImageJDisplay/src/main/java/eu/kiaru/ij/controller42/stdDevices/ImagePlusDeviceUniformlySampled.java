@@ -1,5 +1,6 @@
 package eu.kiaru.ij.controller42.stdDevices;
 import java.io.File;
+import java.time.LocalDateTime;
 
 import eu.kiaru.ij.controller42.structDevice.UniformlySampledSynchronizedDisplayedDevice;
 import eu.kiaru.ij.slidebookExportedTiffOpener.CalibrationTimeOrigin;
@@ -19,7 +20,7 @@ public class ImagePlusDeviceUniformlySampled extends UniformlySampledSynchronize
 				myImpPlus.setSlice((int) this.getCurrentSampleIndexDisplayed()+1);
 			} else {
 				int[] stackPos = myImpPlus.convertIndexToPosition(myImpPlus.getCurrentSlice());
-				System.out.println("frame="+((int) this.getCurrentSampleIndexDisplayed()+1));
+				//System.out.println("frame="+((int) this.getCurrentSampleIndexDisplayed()+1));
 				myImpPlus.setPosition(stackPos[0], stackPos[1], (int) this.getCurrentSampleIndexDisplayed()+1);
 			}
 		}
@@ -112,5 +113,11 @@ public class ImagePlusDeviceUniformlySampled extends UniformlySampledSynchronize
 	public void initDisplay() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public ImageProcessor getSample(LocalDateTime date) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

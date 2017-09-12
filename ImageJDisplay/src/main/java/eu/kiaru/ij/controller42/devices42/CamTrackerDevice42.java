@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDateTime;
+
 import eu.kiaru.ij.controller42.structDevice.MyPlot;
 import eu.kiaru.ij.controller42.structDevice.UniformlySampledSynchronizedDisplayedDevice;
 import ij.gui.Plot;
@@ -172,6 +174,12 @@ public class CamTrackerDevice42 extends UniformlySampledSynchronizedDisplayedDev
 		width = range[1]-range[0];
 		plotChartY.plot.setLimits(currentSampleDisplayed-width/2.0, currentSampleDisplayed+width/2.0, range[2], range[3]);
 		plotChartY.checkLineAtCurrentLocation(currentSampleDisplayed);		
+	}
+
+	@Override
+	public float[] getSample(LocalDateTime date) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
