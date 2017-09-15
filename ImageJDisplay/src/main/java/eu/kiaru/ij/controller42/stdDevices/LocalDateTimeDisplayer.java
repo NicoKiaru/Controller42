@@ -56,12 +56,6 @@ public class LocalDateTimeDisplayer extends DefaultSynchronizedDisplayedDevice<L
 		myPanel.add(idSynchronizerLabel);
 		myPanel.add(timeLabel);
 		frame.add(myPanel);
-		
-		/*frame.add(idSynchronizerLabel);
-		frame.add(timeLabel);
-		*/
-		//frame.pack();
-		
 	}
 
 	@Override

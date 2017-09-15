@@ -6,7 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-import eu.kiaru.ij.controller42.structDevice.MyPlot;
+import eu.kiaru.ij.controller42.stdDevices.MyPlot;
 import eu.kiaru.ij.controller42.structDevice.UniformlySampledSynchronizedDisplayedDevice;
 import ij.gui.Plot;
 

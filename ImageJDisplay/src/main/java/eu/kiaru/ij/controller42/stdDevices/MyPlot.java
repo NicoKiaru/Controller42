@@ -1,4 +1,4 @@
-package eu.kiaru.ij.controller42.structDevice;
+package eu.kiaru.ij.controller42.stdDevices;
 
 import java.awt.Color;
 

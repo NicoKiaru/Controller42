@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
+import eu.kiaru.ij.controller42.stdDevices.MyPlot;
 import eu.kiaru.ij.controller42.structDevice.DefaultSynchronizedDisplayedDevice;
-import eu.kiaru.ij.controller42.structDevice.MyPlot;
 import ij.gui.Plot;
 
 public class ZaberDevice42 extends DefaultSynchronizedDisplayedDevice<Double> {

@@ -1,17 +1,17 @@
-package eu.kiaru.ij.controller42;
+package eu.kiaru.ij.controller42.lipidMembraneBiohysicsCommands;
 
 import java.awt.Color;
 import java.awt.Window;
 import java.time.LocalDateTime;
 
 import org.scijava.command.Command;
-import org.scijava.display.DisplayService;
 import org.scijava.object.ObjectService;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.ui.UIService;
 import org.scijava.util.ColorRGB;
 
+import eu.kiaru.ij.controller42.DSDevicesSynchronizer;
 import eu.kiaru.ij.controller42.devices42.CamTrackerDevice42;
 import eu.kiaru.ij.controller42.devices42.ZaberDevice42;
 import eu.kiaru.ij.controller42.stdDevices.ImagePlusDeviceUniformlySampled;
