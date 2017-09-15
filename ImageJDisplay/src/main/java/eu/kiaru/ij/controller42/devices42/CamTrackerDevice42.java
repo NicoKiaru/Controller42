@@ -159,7 +159,7 @@ public class CamTrackerDevice42 extends UniformlySampledSynchronizedDisplayedDev
 
 	@Override
 	public float[] getSample(int n) {
-		return new float[] {posData[0][n],posData[1][n],posData[2][n],posData[3][n]};
+		return new float[] {posData[0][n],posData[1][n],posData[2][n],posData[3][n],posData[4][n]};
 	}
 
 	@Override
@@ -175,11 +175,12 @@ public class CamTrackerDevice42 extends UniformlySampledSynchronizedDisplayedDev
 		plotChartY.plot.setLimits(currentSampleDisplayed-width/2.0, currentSampleDisplayed+width/2.0, range[2], range[3]);
 		plotChartY.checkLineAtCurrentLocation(currentSampleDisplayed);		
 	}
-
+	
+	/*
 	@Override
 	public float[] getSample(LocalDateTime date) {
 		// TODO Auto-generated method stub
 		return null;
-	}
+	}*/
 
 }

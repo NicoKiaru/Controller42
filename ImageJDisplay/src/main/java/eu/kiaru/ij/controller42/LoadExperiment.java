@@ -12,16 +12,24 @@ import net.imagej.ImageJ;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import org.scijava.command.Command;
 import org.scijava.io.IOService;
+import org.scijava.object.ObjectService;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.ui.UIService;
 
+import eu.kiaru.ij.controller42.devices42.CamTrackerDevice42;
 import eu.kiaru.ij.controller42.devices42.Device42Factory;
+import eu.kiaru.ij.controller42.devices42.ZaberDevice42;
+import eu.kiaru.ij.controller42.stdDevices.ImagePlusDeviceUniformlySampled;
+import eu.kiaru.ij.controller42.stdDevices.LocalDateTimeDisplayer;
 import eu.kiaru.ij.controller42.stdDevices.StdDeviceFactory;
 import eu.kiaru.ij.controller42.structDevice.DefaultSynchronizedDisplayedDevice;
+import eu.kiaru.ij.controller42.structTime.TimeIterator;
 import eu.kiaru.ij.slidebookExportedTiffOpener.ImgPlusFromSlideBookLogFactory;
 import ij.IJ;
 import ij.ImagePlus;
@@ -41,11 +49,16 @@ public class LoadExperiment implements Command {
     @Parameter
     private IOService ioService;
     
+    @Parameter
+    private ObjectService objService;
+    
     @Parameter(label="Select a directory", style="directory") 
     private File myDir;
 
     @Override
     public void run() {        
+    	String syncId = "Exp@"+myDir.getAbsolutePath();
+    	
         uiService.show("Directory : "+myDir.getAbsolutePath());
         File[] files = myDir.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
@@ -66,13 +79,7 @@ public class LoadExperiment implements Command {
         		synchronizer.addDevice(device);
         		initialized=true;
         	}
-        	/*if (!initialized) {
-	        	device = StdDeviceFactory.getDevice(f);
-	        	if (device!=null) {
-	        		synchronizer.addDevice(device);
-	        		initialized=true;
-	        	}
-	        }*/
+
         	if (!initialized) {
         		ImagePlus imSlideBook = ImgPlusFromSlideBookLogFactory.getImagePlusFromLogFile(f);
         		if (imSlideBook!=null) {
@@ -80,44 +87,25 @@ public class LoadExperiment implements Command {
     	        	if (device!=null) {
     	        		synchronizer.addDevice(device);
     	        		initialized=true;
-    	        	} else {
-    	        		System.out.println("ah bah c'est null ici");
     	        	}
         		}
-	        	/*device = StdDeviceFactory.getDevice(f);
-	        	if (device!=null) {
-	        		synchronizer.addDevice(device);
-	        		initialized=true;
-	        	}*/
 	        }
         }   
-
+        
+        LocalDateTimeDisplayer timeDisplay = new LocalDateTimeDisplayer();
+        timeDisplay.setName("Displayed time of experiment "+myDir.getAbsolutePath());
+        synchronizer.addDevice(timeDisplay);
+        timeDisplay.idSynchronizer = syncId;
+        
     	Device42Factory.linkDevices(synchronizer.getDevices());
     	for (DefaultSynchronizedDisplayedDevice device:synchronizer.getDevices().values()) {
     		device.showDisplay();
     	}
-        /*uiService.show("My image", );*/
-        
-        /*String path = "C:\\Users\\Nico\\Desktop\\typethealphabet.png";
-        
-        //ij.ImageJ ij;
-        IJ.open(path);
-        WindowManager.getActiveWindow();*/
-        /*IJ.
-        Dataset dataset;
-		try {
-			dataset = (Dataset) ioService.open(path);
-	        uiService.show(dataset);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-
-        // show the image
-        
-        
-        
-        
+    	
+    	
+        synchronizer.id=syncId;
+    	objService.addObject(synchronizer);
+    	
     }
     
     /**

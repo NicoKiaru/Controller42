@@ -12,7 +12,7 @@ import eu.kiaru.ij.controller42.structDevice.DefaultSynchronizedDisplayedDevice;
 import eu.kiaru.ij.controller42.structDevice.MyPlot;
 import ij.gui.Plot;
 
-public class ZaberDevice42 extends DefaultSynchronizedDisplayedDevice {
+public class ZaberDevice42 extends DefaultSynchronizedDisplayedDevice<Double> {
 	float[] dataZinMM;
 	float[] dataTinS; // relative to startacquisition
 	MyPlot plotChartZ;
@@ -157,6 +157,33 @@ public class ZaberDevice42 extends DefaultSynchronizedDisplayedDevice {
 		logFile=f;
 		logVersion=vers;
 		
+	}
+
+	@Override
+	public Double getSample(LocalDateTime date) {
+		// TODO Auto-generated method stub
+		Duration timeInterval = Duration.between(this.startAcquisitionTime.toLocalTime(),date.toLocalTime());//.dividedBy(numberOfImages-1).toNanos()
+		double timeIntervalInMs = ((double)(timeInterval.getSeconds()*1000)+(double)((double)(timeInterval.getNano())/1e6));
+		double timeIntervalInS = (float)(timeIntervalInMs/1000.0);
+		
+		/*double[] range = plotChartZ.plot.getLimits(); // xmin xmax ymin ymax
+		double width = range[1]-range[0];
+		plotChartZ.plot.setLimits(timeIntervalInS-width/2.0, timeIntervalInS+width/2.0, range[2], range[3]);
+		plotChartZ.checkLineAtCurrentLocation(timeIntervalInS);*/
+		
+		// very inefficient
+		if ((dataTinS==null)||(dataTinS.length<1)) return Double.NaN;
+		int index=0;
+		while ((dataTinS[index]<timeIntervalInS)&&(dataTinS.length>(index+1))) {
+			index++;
+		}
+		
+		if (index==0) return new Double(this.dataZinMM[index]);
+		if (index==dataTinS.length-1) return new Double(this.dataZinMM[index]);
+		
+		// otherwise we can interpolate linearly
+		double alpha = (timeIntervalInS-dataTinS[index-1])/(dataTinS[index]-dataTinS[index-1]);		
+		return dataZinMM[index-1]+alpha*(dataZinMM[index]-dataZinMM[index-1]);
 	}
 
 }

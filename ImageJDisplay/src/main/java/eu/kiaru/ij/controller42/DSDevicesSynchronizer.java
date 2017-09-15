@@ -10,8 +10,10 @@ import eu.kiaru.ij.controller42.structDevice.DefaultSynchronizedDisplayedDevice;
 import eu.kiaru.ij.controller42.structDevice.DeviceEvent;
 import eu.kiaru.ij.controller42.structDevice.DeviceListener;
 
+
 public class DSDevicesSynchronizer implements DeviceListener{
 	
+	public String id;
 	private Set<DefaultSynchronizedDisplayedDevice> devices;
 	private Map<String,DefaultSynchronizedDisplayedDevice> devicesByName;
 	
@@ -29,6 +31,7 @@ public class DSDevicesSynchronizer implements DeviceListener{
 		if (devicesByName.containsKey(device.getName())) {
 			System.err.println("Error : devices with duplicate names!");
 		}
+		System.out.println(device.getName());
 		devicesByName.put(device.getName(), device);
 		device.addDeviceListener(this);
 	}

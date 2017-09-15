@@ -34,7 +34,7 @@ public class MyPlot {
 					plot.getImagePlus().setOverlay(ov);					
 				}
 			} else {
-				System.err.println("imgplus null in MyPlos class");
+				System.err.println("imgplus null in MyPlot class");
 			}
 		}
 		

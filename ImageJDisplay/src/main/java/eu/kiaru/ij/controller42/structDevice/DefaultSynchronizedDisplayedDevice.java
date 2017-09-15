@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-abstract public class DefaultSynchronizedDisplayedDevice implements Synchronizable, Displayable{
+abstract public class DefaultSynchronizedDisplayedDevice<T> implements Synchronizable, Displayable, Samplable<T>{
 	private LocalDateTime currentTime;
 	boolean isDisplayed = false;
 	boolean isSynchronized = true;
