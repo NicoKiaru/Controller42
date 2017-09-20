@@ -118,7 +118,8 @@ public class CameraDevice42 extends ImagePlusDeviceUniformlySampled {
 	@Override
 	public void imageClosed(ImagePlus src) {
 		if (src.getTitle().equals(this.getName())) {
-			((CustomWFVirtualStack42) myImpPlus.getStack()).closeFiles();
+			myVirtualStack.closeFiles();
+			//((CustomWFVirtualStack42) myImpPlus.getStack()).closeFiles();
 		}
 		
 	}

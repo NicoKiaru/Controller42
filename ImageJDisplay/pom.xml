@@ -75,7 +75,7 @@
 
 	<properties>
 		<package-name>eu.kiaru.ij</package-name>
-		<main-class>eu.kiaru.ij.MinJOGLIJCommand</main-class>
+		<main-class>eu.kiaru.ij.controller42.LoadExperiment</main-class>
 		<license.licenseName>bsd_2</license.licenseName>
 		<license.copyrightOwners>Me, myself and I. Corp.</license.copyrightOwners>
 	</properties>
