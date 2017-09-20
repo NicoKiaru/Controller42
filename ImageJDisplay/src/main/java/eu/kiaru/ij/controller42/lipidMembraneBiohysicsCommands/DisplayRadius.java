@@ -11,7 +11,8 @@ import org.scijava.util.ColorRGB;
 import eu.kiaru.ij.controller42.DSDevicesSynchronizer;
 import eu.kiaru.ij.controller42.devices42.CamTrackerDevice42;
 import eu.kiaru.ij.controller42.stdDevices.ImagePlusDeviceUniformlySampled;
-import eu.kiaru.ij.controller42.stdDevices.LinkedUniformlySampledDeviceLivePlot;
+import eu.kiaru.ij.controller42.stdDevices.UniformlySampledDeviceLivePlot;
+import eu.kiaru.ij.controller42.structDevice.UniformlySampledSynchronizedDisplayedDevice;
 import eu.kiaru.ij.controller42.structTime.TimeIterator;
 
 @Plugin(type = Command.class, menuPath = "Controller 42>Display radius")
@@ -25,7 +26,7 @@ public class DisplayRadius implements Command {
 	String trackerDeviceName = "BEAD_TRACKER";
     
 	@Parameter
-	String widefieldDeviceName = "CAMERA_GUPPY";
+	String samplerDeviceName = "CAMERA_GUPPY";
 	
 	@Parameter
 	double kappaInKT;
@@ -67,28 +68,16 @@ public class DisplayRadius implements Command {
     String graphTitle="Radius (nm) vs Time";
 
 	@Override
-	public void run() {
-		/*DSDevicesSynchronizer mySync=null;
-		for (DSDevicesSynchronizer synchronizer : objService.getObjects(DSDevicesSynchronizer.class)) {
-			if (synchronizer.id.equals(synchronizerID)) {
-				mySync=synchronizer;
-				break;
-			}			
-		};
-		if (mySync==null) {
-			System.err.println("Synchronizer id not found!");
-			return;
-		}*/
-		
+	public void run() {		
 		// Looking for devices
 		
-		ImagePlusDeviceUniformlySampled camDevice = (ImagePlusDeviceUniformlySampled) synchronizer.getDevices().get(widefieldDeviceName); // only used for timing purpose
+		UniformlySampledSynchronizedDisplayedDevice samplerRefDevice = (UniformlySampledSynchronizedDisplayedDevice) synchronizer.getDevices().get(samplerDeviceName); // only used for timing purpose
 		
 		CamTrackerDevice42 tracker = (CamTrackerDevice42) synchronizer.getDevices().get(trackerDeviceName);
 		
 		// Population checking		
-		if (camDevice==null) {
-			System.err.println("Camera Device ["+widefieldDeviceName+"] not found.");
+		if (samplerRefDevice==null) {
+			System.err.println("Camera Device ["+samplerDeviceName+"] not found.");
 			return;
 		}
 		
@@ -97,7 +86,7 @@ public class DisplayRadius implements Command {
 			return;
 		}
 		
-		TimeIterator timeIt = new TimeIterator(camDevice, initialFrame, endFrame, stepFrame);
+		TimeIterator timeIt = new TimeIterator(samplerRefDevice, initialFrame, endFrame, stepFrame);
 		
 		int numberOfTimeSteps = timeIt.getNumberOfSteps(); 
 		double[] tPos = new double[numberOfTimeSteps];
@@ -115,7 +104,7 @@ public class DisplayRadius implements Command {
 		double kT = 4e-21;
 		int index=0;		
 	    while (timeIt.hasNext()) {
-	    	tPos[index] = index+initialFrame;
+	    	tPos[index] = index;
 	    	
 	    	LocalDateTime cTime = timeIt.next();
 	    	
@@ -142,9 +131,9 @@ public class DisplayRadius implements Command {
 	    	index++;
 	    }
 	    
-	    LinkedUniformlySampledDeviceLivePlot livePlot = new LinkedUniformlySampledDeviceLivePlot();
+	    UniformlySampledDeviceLivePlot livePlot = new UniformlySampledDeviceLivePlot();
 	    livePlot.initDevice(graphTitle, "Time", "Radius (nm)", tPos,tubeRadiusInnm);
-	    livePlot.setLinkedDevice(camDevice);
+	    livePlot.setSamplingInfos(timeIt.startTime, timeIt.endTime, timeIt.getNumberOfSteps());
 	    synchronizer.addDevice(livePlot);
 	    
 	    livePlot.showDisplay();

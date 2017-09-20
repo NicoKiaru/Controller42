@@ -5,7 +5,7 @@ import java.io.File;
 import eu.kiaru.ij.controller42.structDevice.UniformlySampledSynchronizedDisplayedDevice;
 import ij.gui.Plot;
 
-public class LinkedUniformlySampledDeviceLivePlot extends UniformlySampledSynchronizedDisplayedDevice<Double> {
+public class UniformlySampledDeviceLivePlot extends UniformlySampledSynchronizedDisplayedDevice<Double> {
 	double[] xdata,ydata;
 	public MyPlot plot;
 	
@@ -41,10 +41,10 @@ public class LinkedUniformlySampledDeviceLivePlot extends UniformlySampledSynchr
 		this.xdata =xdata; 
 	}
 	
-	public void setLinkedDevice(UniformlySampledSynchronizedDisplayedDevice device) {
+	/*public void setLinkedDevice(UniformlySampledSynchronizedDisplayedDevice device) {
 		linkedDevice=device;
 		this.copySamplingInfos(linkedDevice);
-	}
+	}*/
 
 	@Override
 	public void initDevice(File f, int version) {

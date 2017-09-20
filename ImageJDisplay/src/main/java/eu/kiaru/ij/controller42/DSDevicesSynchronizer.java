@@ -26,6 +26,16 @@ public class DSDevicesSynchronizer implements DeviceListener{
 		return devicesByName;
 	}
 	
+	public void removeAllDevices() {
+		for (DefaultSynchronizedDisplayedDevice device : devices) {
+			device.removeDeviceListener(this);
+		}
+		this.devices.clear();
+		this.devices=null;
+		this.devicesByName.clear();
+		this.devicesByName=null;
+	}
+	
 	public void addDevice(DefaultSynchronizedDisplayedDevice device) {
 		devices.add(device);
 		if (devicesByName.containsKey(device.getName())) {
@@ -34,6 +44,7 @@ public class DSDevicesSynchronizer implements DeviceListener{
 			int index=0;
 			while (devicesByName.containsKey(cName)) {
 				cName=device.getName()+"_"+index;
+				index++;
 			}
 			device.setName(cName);
 		}
@@ -53,11 +64,19 @@ public class DSDevicesSynchronizer implements DeviceListener{
 		//System.out.println("Device "+e.getSource()+" has changed its time.");
 		LocalDateTime broadcastedDate = e.getSource().getCurrentTime();		
 		//System.out.println("It is "+(broadcastedDate.toLocalTime()).toString()+" according to "+e.getSource().getName()+".");
-		for (DefaultSynchronizedDisplayedDevice device : devices) {
-			if ((device.isSynchronized())&&(!device.equals(e.getSource()))) {
-				device.setCurrentTime(broadcastedDate);
-			}
-		}		
+		if (devices!=null) {
+			for (DefaultSynchronizedDisplayedDevice device : devices) {
+				if (device!=null) {
+					if ((device.isSynchronized())&&(!device.equals(e.getSource()))) {
+						device.setCurrentTime(broadcastedDate);
+					}
+				} else {
+					System.err.println(this.id+" synchronizer has a null device.");
+				}
+			}	
+		} else {
+			System.err.println(this.id+" synchronizer has null devices.");
+		}
 	}
 	
 	@Override

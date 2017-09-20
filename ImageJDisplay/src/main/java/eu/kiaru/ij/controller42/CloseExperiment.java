@@ -46,6 +46,8 @@ public class CloseExperiment implements Command {
 	@Parameter
 	DSDevicesSynchronizer synchronizer;
 	
+	@Parameter
+	ObjectService obj;
 
     @Override
     public void run() {    
@@ -53,7 +55,9 @@ public class CloseExperiment implements Command {
     		device.hideDisplay();
     		device=null;
     	});
-    	synchronizer=null;    	
+    	synchronizer.removeAllDevices();
+    	obj.removeObject(synchronizer);
+    	synchronizer=null;
     }
     
 

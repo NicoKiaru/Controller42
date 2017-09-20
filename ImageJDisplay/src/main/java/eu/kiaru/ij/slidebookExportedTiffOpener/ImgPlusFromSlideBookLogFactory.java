@@ -121,8 +121,6 @@ public class ImgPlusFromSlideBookLogFactory {
 			    int[] dimensions = ExportedSBVirtualStack.getDimensions(logFile.getParent()+File.separator+fileNames[0][0]);
 			    ExportedSBVirtualStack  myVirtualStack = new ExportedSBVirtualStack(logFile.getParent(),fileNames, dimensions[0], dimensions[0], TPs, nChannels, false);
 		      	System.out.println(myVirtualStack==null);
-		      	//myVirtualStack.setAttachedDataPath(attachedRawDataPrefixFile);
-		      	System.out.println(myVirtualStack==null);
 			    
 				ImagePlus myImpPlus = new ImagePlus(logFile.getName(), myVirtualStack);
 				myVirtualStack.setImgPlus(myImpPlus);

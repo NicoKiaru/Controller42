@@ -46,7 +46,11 @@ abstract public class UniformlySampledSynchronizedDisplayedDevice<T> extends Def
 	
 	public LocalDateTime getLocalTimeAt(int indexSample) {
 		double durationInNS = avgTimeBetweenSamplesInMs*(indexSample)*1e6;
-		return this.startAcquisitionTime.plusNanos((long)durationInNS);
+		if (indexSample>=0) {
+			return this.startAcquisitionTime.plusNanos((long)durationInNS);
+		} else {
+			return this.startAcquisitionTime.minusNanos((long)(-durationInNS));
+		}
 	}
 	
 	public void setSamplingInfos(LocalDateTime startAcqu, LocalDateTime endAcqu, int nSamples) {
@@ -121,8 +125,8 @@ abstract public class UniformlySampledSynchronizedDisplayedDevice<T> extends Def
 			if (indexSample<0) {
 				indexSample=0;
 			} else
-			if (indexSample>numberOfSamples) {
-				indexSample=numberOfSamples;
+			if (indexSample>=numberOfSamples) {
+				indexSample=numberOfSamples-1;
 			} 
 			return getSample((int)indexSample);
 			

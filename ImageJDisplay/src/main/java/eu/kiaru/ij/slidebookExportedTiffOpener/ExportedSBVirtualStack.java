@@ -34,7 +34,9 @@ public class ExportedSBVirtualStack extends VirtualStack {
 		NZSLICES=1;
 
 		backingImPs = new ImagePlus[NFRAMES][NCHANNELS];
-		
+		if (NCHANNELS==0) {
+			System.err.println("NChannels=1 is buggy currently!");
+		}
 		for (int channel=0;channel<NCHANNELS;channel++) {
 			System.out.println("f=0; ch="+channel);
 			if (virtual) {

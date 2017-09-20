@@ -58,6 +58,7 @@ public class ImagePlusDeviceUniformlySampled extends UniformlySampledSynchronize
 	
 	@Override
 	public void makeDisplayVisible() {
+		System.out.println("Makes the imageplus "+this.getName()+" visible.");
 		myImpPlus.show();
 	}
 

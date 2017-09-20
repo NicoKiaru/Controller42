@@ -15,7 +15,8 @@ import eu.kiaru.ij.controller42.DSDevicesSynchronizer;
 import eu.kiaru.ij.controller42.devices42.CamTrackerDevice42;
 import eu.kiaru.ij.controller42.devices42.ZaberDevice42;
 import eu.kiaru.ij.controller42.stdDevices.ImagePlusDeviceUniformlySampled;
-import eu.kiaru.ij.controller42.stdDevices.LinkedUniformlySampledDeviceLivePlot;
+import eu.kiaru.ij.controller42.stdDevices.UniformlySampledDeviceLivePlot;
+import eu.kiaru.ij.controller42.structDevice.UniformlySampledSynchronizedDisplayedDevice;
 import eu.kiaru.ij.controller42.structTime.TimeIterator;
 import ij.WindowManager;
 import ij.gui.Plot;
@@ -73,26 +74,12 @@ public class DisplayForce implements Command {
     
 	@Override
 	public void run() {		
-		/*DSDevicesSynchronizer mySync=null;
-		for (DSDevicesSynchronizer synchronizer : objService.getObjects(DSDevicesSynchronizer.class)) {
-			if (synchronizer.id.equals(synchronizerID)) {
-				mySync=synchronizer;
-				break;
-			}			
-		};
-		if (mySync==null) {
-			System.err.println("Synchronizer id not found!");
-			return;
-		}*/
-		
-		// Looking for devices
-		
-		ImagePlusDeviceUniformlySampled camDevice = (ImagePlusDeviceUniformlySampled) synchronizer.getDevices().get(widefieldDeviceName); // only used for timing purpose
+		UniformlySampledSynchronizedDisplayedDevice samplerRefDevice = (UniformlySampledSynchronizedDisplayedDevice) synchronizer.getDevices().get(widefieldDeviceName); // only used for timing purpose
 		
 		CamTrackerDevice42 tracker = (CamTrackerDevice42) synchronizer.getDevices().get(trackerDeviceName);
 		
 		// Population checking		
-		if (camDevice==null) {
+		if (samplerRefDevice==null) {
 			System.err.println("Camera Device ["+widefieldDeviceName+"] not found.");
 			return;
 		}
@@ -102,7 +89,7 @@ public class DisplayForce implements Command {
 			return;
 		}
 		
-		TimeIterator timeIt = new TimeIterator(camDevice, initialFrame, endFrame, stepFrame);
+		TimeIterator timeIt = new TimeIterator(samplerRefDevice, initialFrame, endFrame, stepFrame);
 		
 		int numberOfTimeSteps = timeIt.getNumberOfSteps(); 
 		double[] tPos = new double[numberOfTimeSteps];
@@ -118,7 +105,7 @@ public class DisplayForce implements Command {
 		
 		int index=0;		
 	    while (timeIt.hasNext()) {
-	    	tPos[index] = index+initialFrame;
+	    	tPos[index] = index;
 	    	
 	    	LocalDateTime cTime = timeIt.next();
 	    	
@@ -143,9 +130,9 @@ public class DisplayForce implements Command {
 	    	index++;
 	    }	   
 	    
-	    LinkedUniformlySampledDeviceLivePlot livePlot = new LinkedUniformlySampledDeviceLivePlot();
+	    UniformlySampledDeviceLivePlot livePlot = new UniformlySampledDeviceLivePlot();
 	    livePlot.initDevice(graphTitle, "Time", "Force (pN)", tPos,forceNormInPN);
-	    livePlot.setLinkedDevice(camDevice);
+	    livePlot.setSamplingInfos(timeIt.startTime, timeIt.endTime, timeIt.getNumberOfSteps());
 	    synchronizer.addDevice(livePlot);	    
 	    livePlot.showDisplay();
 
