@@ -24,8 +24,10 @@ import ij.measure.CurveFitter;
 
 @Plugin(type = Command.class, menuPath = "Controller 42>Display force")
 public class DisplayForce implements Command {
+	//@Parameter
+	//String synchronizerID;
 	@Parameter
-	String synchronizerID;
+	DSDevicesSynchronizer synchronizer;
     
 	@Parameter
 	String trackerDeviceName = "BEAD_TRACKER";
@@ -71,7 +73,7 @@ public class DisplayForce implements Command {
     
 	@Override
 	public void run() {		
-		DSDevicesSynchronizer mySync=null;
+		/*DSDevicesSynchronizer mySync=null;
 		for (DSDevicesSynchronizer synchronizer : objService.getObjects(DSDevicesSynchronizer.class)) {
 			if (synchronizer.id.equals(synchronizerID)) {
 				mySync=synchronizer;
@@ -81,13 +83,13 @@ public class DisplayForce implements Command {
 		if (mySync==null) {
 			System.err.println("Synchronizer id not found!");
 			return;
-		}
+		}*/
 		
 		// Looking for devices
 		
-		ImagePlusDeviceUniformlySampled camDevice = (ImagePlusDeviceUniformlySampled) mySync.getDevices().get(widefieldDeviceName); // only used for timing purpose
+		ImagePlusDeviceUniformlySampled camDevice = (ImagePlusDeviceUniformlySampled) synchronizer.getDevices().get(widefieldDeviceName); // only used for timing purpose
 		
-		CamTrackerDevice42 tracker = (CamTrackerDevice42) mySync.getDevices().get(trackerDeviceName);
+		CamTrackerDevice42 tracker = (CamTrackerDevice42) synchronizer.getDevices().get(trackerDeviceName);
 		
 		// Population checking		
 		if (camDevice==null) {
@@ -144,7 +146,7 @@ public class DisplayForce implements Command {
 	    LinkedUniformlySampledDeviceLivePlot livePlot = new LinkedUniformlySampledDeviceLivePlot();
 	    livePlot.initDevice(graphTitle, "Time", "Force (pN)", tPos,forceNormInPN);
 	    livePlot.setLinkedDevice(camDevice);
-	    mySync.addDevice(livePlot);	    
+	    synchronizer.addDevice(livePlot);	    
 	    livePlot.showDisplay();
 
 	}

@@ -30,6 +30,12 @@ public class DSDevicesSynchronizer implements DeviceListener{
 		devices.add(device);
 		if (devicesByName.containsKey(device.getName())) {
 			System.err.println("Error : devices with duplicate names!");
+			String cName=device.getName();
+			int index=0;
+			while (devicesByName.containsKey(cName)) {
+				cName=device.getName()+"_"+index;
+			}
+			device.setName(cName);
 		}
 		System.out.println(device.getName());
 		devicesByName.put(device.getName(), device);
@@ -52,6 +58,11 @@ public class DSDevicesSynchronizer implements DeviceListener{
 				device.setCurrentTime(broadcastedDate);
 			}
 		}		
+	}
+	
+	@Override
+	public String toString() {
+		return this.id;
 	}
 	
 }

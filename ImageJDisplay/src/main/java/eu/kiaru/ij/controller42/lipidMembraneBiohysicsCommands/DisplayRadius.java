@@ -16,8 +16,10 @@ import eu.kiaru.ij.controller42.structTime.TimeIterator;
 
 @Plugin(type = Command.class, menuPath = "Controller 42>Display radius")
 public class DisplayRadius implements Command {
+	//@Parameter
+	//String synchronizerID;
 	@Parameter
-	String synchronizerID;
+	DSDevicesSynchronizer synchronizer;
     
 	@Parameter
 	String trackerDeviceName = "BEAD_TRACKER";
@@ -66,7 +68,7 @@ public class DisplayRadius implements Command {
 
 	@Override
 	public void run() {
-		DSDevicesSynchronizer mySync=null;
+		/*DSDevicesSynchronizer mySync=null;
 		for (DSDevicesSynchronizer synchronizer : objService.getObjects(DSDevicesSynchronizer.class)) {
 			if (synchronizer.id.equals(synchronizerID)) {
 				mySync=synchronizer;
@@ -76,13 +78,13 @@ public class DisplayRadius implements Command {
 		if (mySync==null) {
 			System.err.println("Synchronizer id not found!");
 			return;
-		}
+		}*/
 		
 		// Looking for devices
 		
-		ImagePlusDeviceUniformlySampled camDevice = (ImagePlusDeviceUniformlySampled) mySync.getDevices().get(widefieldDeviceName); // only used for timing purpose
+		ImagePlusDeviceUniformlySampled camDevice = (ImagePlusDeviceUniformlySampled) synchronizer.getDevices().get(widefieldDeviceName); // only used for timing purpose
 		
-		CamTrackerDevice42 tracker = (CamTrackerDevice42) mySync.getDevices().get(trackerDeviceName);
+		CamTrackerDevice42 tracker = (CamTrackerDevice42) synchronizer.getDevices().get(trackerDeviceName);
 		
 		// Population checking		
 		if (camDevice==null) {
@@ -143,7 +145,7 @@ public class DisplayRadius implements Command {
 	    LinkedUniformlySampledDeviceLivePlot livePlot = new LinkedUniformlySampledDeviceLivePlot();
 	    livePlot.initDevice(graphTitle, "Time", "Radius (nm)", tPos,tubeRadiusInnm);
 	    livePlot.setLinkedDevice(camDevice);
-	    mySync.addDevice(livePlot);
+	    synchronizer.addDevice(livePlot);
 	    
 	    livePlot.showDisplay();
 	}
