@@ -8,6 +8,12 @@ import ij.IJ;
 import ij.ImageListener;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
+import loci.common.services.ServiceFactory;
+import loci.formats.IFormatReader;
+import loci.formats.ImageReader;
+import loci.formats.meta.IMetadata;
+import loci.formats.services.OMEXMLService;
+import loci.plugins.BF;
 
 public class ImagePlusDeviceUniformlySampled extends UniformlySampledSynchronizedDisplayedDevice<ImageProcessor> implements ImageListener {
 
@@ -106,6 +112,31 @@ public class ImagePlusDeviceUniformlySampled extends UniformlySampledSynchronize
 		} else {
 			System.out.println("Warning : no extended calibration detected for the image.");
 			System.err.println("Fetching acquisition time in metadata currently unsupported.");
+	/*		 ServiceFactory factory = new ServiceFactory();
+			    OMEXMLService service = factory.getInstance(OMEXMLService.class);
+			    IMetadata meta = service.createOMEXMLMetadata();
+			    // or if you want a specific schema version, you can use:
+			    //IMetadata meta = service.createOMEXMLMetadata(null, "2009-02");
+			    //meta.createRoot();
+
+			    // create format reader
+			    IFormatReader reader = new ImageReader();
+			    reader.setMetadataStore(meta);
+
+			    // initialize file
+			    System.out.println("Fetching metadata of  " + this.getName());
+			    reader.setId(this.getName());
+			    
+
+			    int seriesCount = reader.getSeriesCount();
+			    if (series < seriesCount) reader.setSeries(series);
+			    series = reader.getSeries();
+			    System.out.println("\tImage series = " + series + " of " + seriesCount);
+
+			    printDimensions(reader);
+			    printGlobalTiming(meta, series);
+			    printTimingPerTimepoint(meta, series);
+			    printTimingPerPlane(meta, series);*/
 		}
 		myImpPlus.addImageListener(this);
 	}
@@ -114,11 +145,5 @@ public class ImagePlusDeviceUniformlySampled extends UniformlySampledSynchronize
 	public void initDisplay() {
 		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public ImageProcessor getSample(LocalDateTime date) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

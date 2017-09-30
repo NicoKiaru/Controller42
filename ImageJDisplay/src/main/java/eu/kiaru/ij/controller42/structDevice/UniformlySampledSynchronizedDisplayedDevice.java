@@ -120,7 +120,6 @@ abstract public class UniformlySampledSynchronizedDisplayedDevice<T> extends Def
 			Duration timeInterval = Duration.between(this.startAcquisitionTime.toLocalTime(),date.toLocalTime());//.dividedBy(numberOfImages-1).toNanos()
 			double timeIntervalInMs = ((double)(timeInterval.getSeconds()*1000)+(double)((double)(timeInterval.getNano())/1e6));
 			long indexSample = java.lang.Math.round((double)(timeIntervalInMs/avgTimeBetweenSamplesInMs));
-			//newSampleDisplayed+=1;// because of IJ1 notation style
 
 			if (indexSample<0) {
 				indexSample=0;

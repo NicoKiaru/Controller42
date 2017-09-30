@@ -34,6 +34,7 @@ import ij.plugin.HyperStackConverter;
 public class ImgPlusFromSlideBookLogFactory {
 	static public ImagePlus getImagePlusFromLogFile(File logFile) {
 		BufferedReader reader;
+		if (!isLogFile(logFile)) return null;
 		try {
 			reader = new BufferedReader(new FileReader(logFile.getAbsolutePath()));
 		    String line = reader.readLine(); // skips export date time
@@ -90,7 +91,6 @@ public class ImgPlusFromSlideBookLogFactory {
 		    	infoKeys.put(colTitles[i], i);
 		    	System.out.println(colTitles[i]);
 		    }
-		    //ArrayList<String> fName = new ArrayList<>();
 		    String[][] fileNames = new String[TPs][nChannels];
 		    Map<String,Integer> channelIndex = new HashMap<>();
 		    int currentChannelIndex=0;
@@ -116,16 +116,15 @@ public class ImgPlusFromSlideBookLogFactory {
 			    	if ((globalIndex % nChannels)==0) frame++;
 			    }
 			    
-			    //	public ExportedSBVirtualStack(String[][] filenames, int width,int height, int nframes, int nchannels, int nzslices) {
-			    
 			    int[] dimensions = ExportedSBVirtualStack.getDimensions(logFile.getParent()+File.separator+fileNames[0][0]);
-			    ExportedSBVirtualStack  myVirtualStack = new ExportedSBVirtualStack(logFile.getParent(),fileNames, dimensions[0], dimensions[0], TPs, nChannels, false);
+			    ExportedSBVirtualStack  myVirtualStack = new ExportedSBVirtualStack(logFile.getParent(),fileNames, dimensions[0], dimensions[1], TPs, nChannels, false);
 		      	System.out.println(myVirtualStack==null);
 			    
 				ImagePlus myImpPlus = new ImagePlus(logFile.getName(), myVirtualStack);
-				myVirtualStack.setImgPlus(myImpPlus);
+
 				myImpPlus = HyperStackConverter.toHyperStack(myImpPlus, nChannels, 1, TPs);
-				//myImpPlus.show();
+				myVirtualStack.setHyperStack(myImpPlus);
+
 				CalibrationTimeOrigin cal = new CalibrationTimeOrigin();
 				cal.setTimeUnit("ms");
 				cal.frameInterval=avgTimeLapseInterval;
@@ -163,6 +162,10 @@ public class ImgPlusFromSlideBookLogFactory {
 		}	
 		
 		return null;
+	}
+	
+	public static boolean isLogFile(File path) {
+		return path.getPath().toLowerCase().endsWith(".log"); 
 	}
 	
 	// Because slidebook export is stupidly formatted

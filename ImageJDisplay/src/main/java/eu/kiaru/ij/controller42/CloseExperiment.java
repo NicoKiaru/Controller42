@@ -29,7 +29,7 @@ import eu.kiaru.ij.controller42.stdDevices.ImagePlusDeviceUniformlySampled;
 import eu.kiaru.ij.controller42.stdDevices.LocalDateTimeDisplayer;
 import eu.kiaru.ij.controller42.stdDevices.StdDeviceFactory;
 import eu.kiaru.ij.controller42.structDevice.DefaultSynchronizedDisplayedDevice;
-import eu.kiaru.ij.controller42.structTime.TimeIterator;
+import eu.kiaru.ij.controller42.structTime.UniformTimeIterator;
 import eu.kiaru.ij.slidebookExportedTiffOpener.ImgPlusFromSlideBookLogFactory;
 import ij.IJ;
 import ij.ImagePlus;

@@ -25,6 +25,7 @@ public class StdDeviceFactory {
 	
 	public static ImagePlusDeviceUniformlySampled getDevice(ImagePlus img) {
 		ImagePlusDeviceUniformlySampled myDevice=null;	
+		System.err.println("All ImagePlus images are currently assumed to be uniformly sampled.");
 		myDevice = new ImagePlusDeviceUniformlySampled();
 		myDevice.initDevice(img);
 		return myDevice;

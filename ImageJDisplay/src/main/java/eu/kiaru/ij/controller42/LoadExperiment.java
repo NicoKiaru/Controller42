@@ -8,10 +8,12 @@
 
 package eu.kiaru.ij.controller42;
 
+import net.imagej.Dataset;
 import net.imagej.ImageJ;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -29,11 +31,14 @@ import eu.kiaru.ij.controller42.stdDevices.ImagePlusDeviceUniformlySampled;
 import eu.kiaru.ij.controller42.stdDevices.LocalDateTimeDisplayer;
 import eu.kiaru.ij.controller42.stdDevices.StdDeviceFactory;
 import eu.kiaru.ij.controller42.structDevice.DefaultSynchronizedDisplayedDevice;
-import eu.kiaru.ij.controller42.structTime.TimeIterator;
+import eu.kiaru.ij.controller42.structTime.UniformTimeIterator;
 import eu.kiaru.ij.slidebookExportedTiffOpener.ImgPlusFromSlideBookLogFactory;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
+import io.scif.FormatException;
+import loci.plugins.BF;
+import loci.plugins.in.ImporterOptions;
 
 /**
  * Todo
@@ -62,7 +67,7 @@ public class LoadExperiment implements Command {
         uiService.show("Directory : "+myDir.getAbsolutePath());
         File[] files = myDir.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
-                return (name.toLowerCase().endsWith(".log"));
+                return !(name.toLowerCase().endsWith(".raw"));
                 	  //||name.toLowerCase().endsWith(".tif")
                 	  //||name.toLowerCase().endsWith(".tiff"));
             }
@@ -72,7 +77,7 @@ public class LoadExperiment implements Command {
         
         for (File f:files) {
         	boolean initialized=false;
-        	//uiService.show("File : "+f.getAbsolutePath());
+        	System.out.println("File : "+f.getAbsolutePath());
         	DefaultSynchronizedDisplayedDevice device;
         	device = Device42Factory.getDevice(f);
         	if (device!=null) {
@@ -90,6 +95,55 @@ public class LoadExperiment implements Command {
     	        	}
         		}
 	        }
+        	
+        	if (!initialized)  {
+        		// Could be an image ?
+                /*Dataset dataset;
+                if (ioService.supports(f.getAbsolutePath())) {
+	                try {
+						dataset = (Dataset) (ioService.open(f.getAbsolutePath()));
+		                // display the dataset
+		                uiService.show(dataset);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						//e.printStackTrace();
+						System.err.println(f.getName()+"is not supported recognized as a dataset ...");
+					}
+                } else {
+                	System.err.println(f.getName()+"is not supported recognized as a dataset ...");
+                }*/       		
+        		
+        		// Try opening with bio-formats importer
+        		/*try {
+	        		ImporterOptions options = new ImporterOptions();
+	        		options.setId(f.getAbsolutePath());
+	        		options.setAutoscale(true);
+	        		//options.setCrop(true);
+	        		//options.setCropRegion(0, new Region(x, y, w, h));
+	        		options.setColorMode(ImporterOptions.COLOR_MODE_COMPOSITE);
+	        		//...etc.
+	        		ImagePlus[] imps = BF.openImagePlus(options);
+	        		for (ImagePlus imp:imps) {
+	        			if (imp!=null) {
+	        				//imps[0].show();
+	        				device = StdDeviceFactory.getDevice(imp);
+	        	        	if (device!=null) {
+	        	        		synchronizer.addDevice(device);
+	        	        		initialized=true;
+	        	        	}
+	        			}
+	        		}
+        		} catch (Exception e) {
+						// TODO Auto-generated catch block
+						//e.printStackTrace();
+						System.err.println(f.getName()+"is not supported recognized as a dataset ...");
+				}*/
+        		/*
+        		ImagePlus imp = IJ.openImage(f.getAbsolutePath());
+        		if (imp!=null) {
+        			imp.show();
+        		}*/
+        	}
         }   
         
         LocalDateTimeDisplayer timeDisplay = new LocalDateTimeDisplayer();

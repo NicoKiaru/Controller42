@@ -17,7 +17,7 @@ import eu.kiaru.ij.controller42.devices42.ZaberDevice42;
 import eu.kiaru.ij.controller42.stdDevices.ImagePlusDeviceUniformlySampled;
 import eu.kiaru.ij.controller42.stdDevices.UniformlySampledDeviceLivePlot;
 import eu.kiaru.ij.controller42.structDevice.UniformlySampledSynchronizedDisplayedDevice;
-import eu.kiaru.ij.controller42.structTime.TimeIterator;
+import eu.kiaru.ij.controller42.structTime.UniformTimeIterator;
 import ij.WindowManager;
 import ij.gui.Plot;
 import ij.gui.PlotWindow;
@@ -34,7 +34,7 @@ public class DisplayForce implements Command {
 	String trackerDeviceName = "BEAD_TRACKER";
     
 	@Parameter
-	String widefieldDeviceName = "CAMERA_GUPPY";
+	String sampleLikeDeviceName = "CAMERA_GUPPY";
     
 	@Parameter
 	int initialFrame;
@@ -74,13 +74,13 @@ public class DisplayForce implements Command {
     
 	@Override
 	public void run() {		
-		UniformlySampledSynchronizedDisplayedDevice samplerRefDevice = (UniformlySampledSynchronizedDisplayedDevice) synchronizer.getDevices().get(widefieldDeviceName); // only used for timing purpose
+		UniformlySampledSynchronizedDisplayedDevice samplerRefDevice = (UniformlySampledSynchronizedDisplayedDevice) synchronizer.getDevices().get(sampleLikeDeviceName); // only used for timing purpose
 		
 		CamTrackerDevice42 tracker = (CamTrackerDevice42) synchronizer.getDevices().get(trackerDeviceName);
 		
 		// Population checking		
 		if (samplerRefDevice==null) {
-			System.err.println("Camera Device ["+widefieldDeviceName+"] not found.");
+			System.err.println("Camera Device ["+sampleLikeDeviceName+"] not found.");
 			return;
 		}
 		
@@ -89,7 +89,7 @@ public class DisplayForce implements Command {
 			return;
 		}
 		
-		TimeIterator timeIt = new TimeIterator(samplerRefDevice, initialFrame, endFrame, stepFrame);
+		UniformTimeIterator timeIt = new UniformTimeIterator(samplerRefDevice, initialFrame, endFrame, stepFrame);
 		
 		int numberOfTimeSteps = timeIt.getNumberOfSteps(); 
 		double[] tPos = new double[numberOfTimeSteps];

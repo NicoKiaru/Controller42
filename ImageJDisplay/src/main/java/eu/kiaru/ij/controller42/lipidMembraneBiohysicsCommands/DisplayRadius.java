@@ -13,7 +13,7 @@ import eu.kiaru.ij.controller42.devices42.CamTrackerDevice42;
 import eu.kiaru.ij.controller42.stdDevices.ImagePlusDeviceUniformlySampled;
 import eu.kiaru.ij.controller42.stdDevices.UniformlySampledDeviceLivePlot;
 import eu.kiaru.ij.controller42.structDevice.UniformlySampledSynchronizedDisplayedDevice;
-import eu.kiaru.ij.controller42.structTime.TimeIterator;
+import eu.kiaru.ij.controller42.structTime.UniformTimeIterator;
 
 @Plugin(type = Command.class, menuPath = "Controller 42>Display radius")
 public class DisplayRadius implements Command {
@@ -26,7 +26,7 @@ public class DisplayRadius implements Command {
 	String trackerDeviceName = "BEAD_TRACKER";
     
 	@Parameter
-	String samplerDeviceName = "CAMERA_GUPPY";
+	String sampleLikeDeviceName = "CAMERA_GUPPY";
 	
 	@Parameter
 	double kappaInKT;
@@ -71,13 +71,13 @@ public class DisplayRadius implements Command {
 	public void run() {		
 		// Looking for devices
 		
-		UniformlySampledSynchronizedDisplayedDevice samplerRefDevice = (UniformlySampledSynchronizedDisplayedDevice) synchronizer.getDevices().get(samplerDeviceName); // only used for timing purpose
+		UniformlySampledSynchronizedDisplayedDevice samplerRefDevice = (UniformlySampledSynchronizedDisplayedDevice) synchronizer.getDevices().get(sampleLikeDeviceName); // only used for timing purpose
 		
 		CamTrackerDevice42 tracker = (CamTrackerDevice42) synchronizer.getDevices().get(trackerDeviceName);
 		
 		// Population checking		
 		if (samplerRefDevice==null) {
-			System.err.println("Camera Device ["+samplerDeviceName+"] not found.");
+			System.err.println("Camera Device ["+sampleLikeDeviceName+"] not found.");
 			return;
 		}
 		
@@ -86,7 +86,7 @@ public class DisplayRadius implements Command {
 			return;
 		}
 		
-		TimeIterator timeIt = new TimeIterator(samplerRefDevice, initialFrame, endFrame, stepFrame);
+		UniformTimeIterator timeIt = new UniformTimeIterator(samplerRefDevice, initialFrame, endFrame, stepFrame);
 		
 		int numberOfTimeSteps = timeIt.getNumberOfSteps(); 
 		double[] tPos = new double[numberOfTimeSteps];

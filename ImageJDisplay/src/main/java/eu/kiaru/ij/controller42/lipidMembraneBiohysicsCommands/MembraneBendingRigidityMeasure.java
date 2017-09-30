@@ -15,7 +15,7 @@ import eu.kiaru.ij.controller42.DSDevicesSynchronizer;
 import eu.kiaru.ij.controller42.devices42.CamTrackerDevice42;
 import eu.kiaru.ij.controller42.devices42.ZaberDevice42;
 import eu.kiaru.ij.controller42.stdDevices.ImagePlusDeviceUniformlySampled;
-import eu.kiaru.ij.controller42.structTime.TimeIterator;
+import eu.kiaru.ij.controller42.structTime.UniformTimeIterator;
 import ij.WindowManager;
 import ij.gui.Plot;
 import ij.gui.PlotWindow;
@@ -36,7 +36,7 @@ public class MembraneBendingRigidityMeasure implements Command {
 	String trackerDeviceName = "BEAD_TRACKER";
     
 	@Parameter
-	String widefieldDeviceName = "CAMERA_GUPPY";
+	String sampleLikeDeviceName = "CAMERA_GUPPY";
     
 	@Parameter
 	int initialFrame;
@@ -109,7 +109,7 @@ public class MembraneBendingRigidityMeasure implements Command {
 		// Looking for devices		
 		ZaberDevice42 zaber = (ZaberDevice42) synchronizer.getDevices().get(zaberDeviceName);
 		
-		ImagePlusDeviceUniformlySampled camDevice = (ImagePlusDeviceUniformlySampled) synchronizer.getDevices().get(widefieldDeviceName); // only used for timing purpose
+		ImagePlusDeviceUniformlySampled camDevice = (ImagePlusDeviceUniformlySampled) synchronizer.getDevices().get(sampleLikeDeviceName); // only used for timing purpose
 		
 		CamTrackerDevice42 tracker = (CamTrackerDevice42) synchronizer.getDevices().get(trackerDeviceName);
 		
@@ -120,7 +120,7 @@ public class MembraneBendingRigidityMeasure implements Command {
 		}
 		
 		if (camDevice==null) {
-			System.err.println("Camera Device ["+widefieldDeviceName+"] not found.");
+			System.err.println("Camera Device ["+sampleLikeDeviceName+"] not found.");
 			return;
 		}
 		
@@ -129,7 +129,7 @@ public class MembraneBendingRigidityMeasure implements Command {
 			return;
 		}
 		
-		TimeIterator timeIt = new TimeIterator(camDevice, initialFrame, endFrame, stepFrame);
+		UniformTimeIterator timeIt = new UniformTimeIterator(camDevice, initialFrame, endFrame, stepFrame);
 		
 		int numberOfTimeSteps = timeIt.getNumberOfSteps(); 
 		double[] zPos = new double[numberOfTimeSteps];
@@ -228,7 +228,7 @@ public class MembraneBendingRigidityMeasure implements Command {
 	    report+="Zaber  = "+zaberDeviceName+"\n";
 	    report+="\t zPos conversion 1 unit = "+zPositionToPaConversionFactor+" Pa\n";
 	    report+="Tracker = "+trackerDeviceName+"\n";
-	    report+="Camera = "+widefieldDeviceName+"\n";
+	    report+="Camera = "+sampleLikeDeviceName+"\n";
 	    report+=" 1 pix = "+this.onePixToMicrons+" um\n";
 	    report+="\t TP ini   = "+initialFrame+"\n";
 	    report+="\t TP end   = "+endFrame+"\n";

@@ -5,6 +5,7 @@ import java.io.File;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.VirtualStack;
+import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 
 public class ExportedSBVirtualStack extends VirtualStack {
@@ -34,9 +35,7 @@ public class ExportedSBVirtualStack extends VirtualStack {
 		NZSLICES=1;
 
 		backingImPs = new ImagePlus[NFRAMES][NCHANNELS];
-		if (NCHANNELS==0) {
-			System.err.println("NChannels=1 is buggy currently!");
-		}
+		
 		for (int channel=0;channel<NCHANNELS;channel++) {
 			System.out.println("f=0; ch="+channel);
 			if (virtual) {
@@ -46,13 +45,13 @@ public class ExportedSBVirtualStack extends VirtualStack {
 				backingImPs[0][channel] =  IJ.openImage(folderPath + File.separator + filenames[0][channel]);
 			}
 		}
-			
+		
 		for (int i=0; i<(NFRAMES*NCHANNELS*NZSLICES); i++) {
 			addSlice(""+(i+1));
 		}
 	}
 	
-	public void setImgPlus(ImagePlus imgP) {
+	public void setHyperStack(ImagePlus imgP) {
 		this.linkedHyperStack=imgP;
 	}
 
@@ -60,8 +59,8 @@ public class ExportedSBVirtualStack extends VirtualStack {
 		if ((linkedHyperStack!=null)&&(!this.hasZSlices)) {
 			int[] stackPos = linkedHyperStack.convertIndexToPosition(n);			
 			return (this.backingImPs[0][stackPos[0]-1].getImageStack().getProcessor(stackPos[2]));
-		} else {
-			return null;
+		} else {	
+			return this.backingImPs[0][0].getImageStack().getProcessor(n);
 		}
 	}
 
