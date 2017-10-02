@@ -25,6 +25,7 @@ public class MyPlot {
 			ij.gui.Line.setWidth(2);
 			ij.gui.Line.setColor(new Color(150,50,50));
 			lineCurrentTime = new Line(pX,0,pX,h);
+			
 			if (plot.getImagePlus()!=null){
 				if (plot.getImagePlus().getOverlay()!=null) {
 					plot.getImagePlus().getOverlay().add(lineCurrentTime);

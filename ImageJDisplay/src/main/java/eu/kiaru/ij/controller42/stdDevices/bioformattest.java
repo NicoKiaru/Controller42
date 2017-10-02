@@ -113,11 +113,15 @@ public class bioformattest {
     int planeCount = meta.getPlaneCount(series);
     for (int i = 0; i < planeCount; i++) {
       Time deltaT = meta.getPlaneDeltaT(series, i);
-      if (deltaT == null) continue;
+      if (deltaT == null)  {
+    	  System.out.println("DeltaT not set!");
+    	  continue;
+      }
       // convert plane ZCT coordinates into image plane index
       int z = meta.getPlaneTheZ(series, i).getValue().intValue();
       int c = meta.getPlaneTheC(series, i).getValue().intValue();
       int t = meta.getPlaneTheT(series, i).getValue().intValue();
+      
       if (z == 0 && c == 0) {
         System.out.println("\tTimepoint #" + t + " = " + deltaT.value(UNITS.SECOND).doubleValue() + " s");
       }

@@ -122,8 +122,11 @@ public class LoadExperiment implements Command {
 	        		//options.setCropRegion(0, new Region(x, y, w, h));
 	        		options.setColorMode(ImporterOptions.COLOR_MODE_COMPOSITE);
 	        		//...etc.
+	        		
 	        		ImagePlus[] imps = BF.openImagePlus(options);
 	        		for (ImagePlus imp:imps) {
+	        			//imp.getProcessor().cl
+	        			
 	        			if (imp!=null) {
 	        				//imps[0].show();
 	        				device = StdDeviceFactory.getDevice(imp);

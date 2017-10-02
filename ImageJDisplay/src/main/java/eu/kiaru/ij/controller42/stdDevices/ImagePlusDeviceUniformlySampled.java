@@ -106,12 +106,10 @@ public class ImagePlusDeviceUniformlySampled extends UniformlySampledSynchronize
 			//System.out.println("yes!");
 			this.startAcquisitionTime=((CalibrationTimeOrigin)(myImpPlus.getCalibration())).startAcquisitionTime;
 			this.setSamplingInfos(startAcquisitionTime, myImpPlus.getNFrames(), myImpPlus.getCalibration().frameInterval);
-			/*System.out.println("startAcquisitionTime="+startAcquisitionTime);
-			System.out.println("myImpPlus.getNFrames()="+myImpPlus.getNFrames());
-			System.out.println("myImpPlus.getCalibration().frameInterval="+myImpPlus.getCalibration().frameInterval);*/
 		} else {
 			System.out.println("Warning : no extended calibration detected for the image.");
 			System.err.println("Fetching acquisition time in metadata currently unsupported.");
+			System.out.println("myImpPlus.getStartTime()="+myImpPlus.getStartTime());
 	/*		 ServiceFactory factory = new ServiceFactory();
 			    OMEXMLService service = factory.getInstance(OMEXMLService.class);
 			    IMetadata meta = service.createOMEXMLMetadata();
