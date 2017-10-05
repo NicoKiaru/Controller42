@@ -65,11 +65,10 @@ public class Device42Helper {
     public static int getController42LogFileVersion(File path) {
     	try	{
     		BufferedReader reader = new BufferedReader(new FileReader(path.getAbsolutePath()));
-    		try {
-	    		
-    			String line;		    
+    		try {	    		
+    			String line;
 			    if ((line = reader.readLine()) == null)  			    {return IS_NOT_DEVICE42;}
-			    if (!line.equals(defautHeaderDevice42Line1)) 			{return IS_NOT_DEVICE42;}
+			    if (!line.startsWith(defautHeaderDevice42Line1)) 			{return IS_NOT_DEVICE42;}
 			    if ((line = reader.readLine()) == null) 	 			{return IS_NOT_DEVICE42;}
 			 	if (!line.startsWith(defautHeaderDevice42Line2Prefix))  {return IS_NOT_DEVICE42;}
 			 	if ((line = reader.readLine()) == null) 	 			{return IS_NOT_DEVICE42;}

@@ -43,11 +43,11 @@ public class AddDevice implements Command{
     	        		initialized=true;
     	        	}
         		}
-	        }
-        
-        
-    	Device42Factory.linkDevices(synchronizer.getDevices());
-    	device.showDisplay();	
+	        }        	
+        	if (device!=null) {        
+        		Device42Factory.linkDevices(synchronizer.getDevices());
+        		device.showDisplay();
+        	}
 	}
 	
 	
