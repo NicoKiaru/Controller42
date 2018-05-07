@@ -176,8 +176,8 @@ public class LoadExperiment implements Command {
     public static void main(final String... args) throws Exception {
         // create the ImageJ application context with all available services
 
-        ij.ImageJ ij1;
-        ij1 = new ij.ImageJ(null, ij.ImageJ.STANDALONE);
+        /*ij.ImageJ ij1;
+        ij1 = new ij.ImageJ(null, ij.ImageJ.STANDALONE);*/
     	
     	final ImageJ ij2 = new ImageJ();
         ij2.ui().showUI();

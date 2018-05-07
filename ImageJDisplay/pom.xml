@@ -8,13 +8,13 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>17.0.0</version>
+		<version>19.2.0</version>
 		<relativePath />
 	</parent>
 
 	<groupId>eu.kiaru</groupId>
 	<artifactId>Controller42Display</artifactId>
-	<version>0.1.4-SNAPSHOT</version>
+	<version>0.1.5-SNAPSHOT</version>
 
 	<name>Controller42Display</name>
 	<description>A set of commands to display Controller 42 acquisitions in Fiji.</description>
@@ -101,6 +101,10 @@
 		<dependency>
   			<groupId>ome</groupId>
   			<artifactId>bio-formats_plugins</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>imagej-legacy</artifactId>
 		</dependency>
 	</dependencies>
 </project>

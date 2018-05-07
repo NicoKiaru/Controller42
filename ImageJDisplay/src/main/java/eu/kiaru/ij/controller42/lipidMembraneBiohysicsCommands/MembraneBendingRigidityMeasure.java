@@ -5,6 +5,7 @@ import java.awt.Window;
 import java.time.LocalDateTime;
 
 import org.scijava.command.Command;
+import org.scijava.log.LogService;
 import org.scijava.object.ObjectService;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
@@ -88,6 +89,9 @@ public class MembraneBendingRigidityMeasure implements Command {
     
     @Parameter
     private UIService uiService;
+    
+    @Parameter
+    private LogService lService;
     
     @Parameter
     String graphTitle="Force^2 vs Sigma";
@@ -251,6 +255,7 @@ public class MembraneBendingRigidityMeasure implements Command {
 	    report+="\t R^2  = "+cf.getRSquared()+"\n";
 	    
 	    uiService.show(report);
+	    lService.info(report);
 	    
 	    Plot f2sigmaPlot;
 	    if (this.appendToExistingGraph) {
