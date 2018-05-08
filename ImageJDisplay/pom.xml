@@ -14,7 +14,7 @@
 
 	<groupId>eu.kiaru</groupId>
 	<artifactId>Controller42Display</artifactId>
-	<version>0.1.5-SNAPSHOT</version>
+	<version>0.1.6</version>
 
 	<name>Controller42Display</name>
 	<description>A set of commands to display Controller 42 acquisitions in Fiji.</description>

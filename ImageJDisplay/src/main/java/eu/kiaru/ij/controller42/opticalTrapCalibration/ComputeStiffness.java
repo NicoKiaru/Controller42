@@ -209,89 +209,17 @@ public class ComputeStiffness implements Command {
 	    double factorSpeedToForceInpN = 6*java.lang.Math.PI*this.dynamicViscosity*this.beadDiameterInMicrons/2.0*1e-6*1e-6*1e12; // result in pN
 	    
 	    double stiffness = factorSpeedToForceInpN*cf.getParams()[1];
-	    System.out.println("Viscosity = "+this.dynamicViscosity+" Pa.s.");
-	    System.out.println("Bead radius = "+(this.beadDiameterInMicrons/2.0)+" um.");
-	    System.out.println("Stiffness = "+stiffness+" pN.um-1.");
 	    
-	    
-	    //System.out.println("Origin="+cf.getParams()[0]);
-	   // double kT = 4e-21; // because pN
-	   // double kappa = cf.getParams()[1]/(8*java.lang.Math.PI*java.lang.Math.PI)/kT;
-	   // double sigma0 = cf.getParams()[0]/cf.getParams()[1];
-	    
-	    
-	   
-	    //
-	    //kappa=p(1)/(8*pi*pi)/kT; % in kT
-	    //disp(['kappa = ',num2str(kappa),' kT']);
-	  /*  String report = "";
-	    report+=" - Kappa measurement report \n";
-	    report+="--------------------------\n";
-	    report+="Input : \n";
-	    report+="sync ID = "+synchronizer.id+"\n";
-	    report+="Zaber  = "+zaberDeviceName+"\n";
-	    report+="\t zPos conversion 1 unit = "+zPositionToPaConversionFactor+" Pa\n";
-	    report+="Tracker = "+trackerDeviceName+"\n";
-	    report+="Camera = "+sampleLikeDeviceName+"\n";
-	    report+=" 1 pix = "+this.onePixToMicrons+" um\n";
-	    report+="\t TP ini   = "+initialFrame+"\n";
-	    report+="\t TP end   = "+endFrame+"\n";
-	    report+="\t TP step  = "+stepFrame+"\n";
-	    report+="Radius Pipette = "+this.pipetteRadiusInMicrons+" um\n";
-	    report+="Radius Vesicle = "+this.vesicleRadiusInMicrons+" um\n";
-	    report+="Trap \n";
-	    report+="\t xOTrap = "+this.x0Trap+" (px)\n";
-	    report+="\t X stiffness = "+this.xTrapStiffness_pNPerMicron+" pN.um-1 \n";
-	    if (this.ignoreYPosition) {
-	    	report+="Ignore Y Axis\n";
-	    } else {
-	    	report+="\t yOTrap = "+this.y0Trap+" (px)\n";
-		    report+="\t Y stiffness = "+this.yTrapStiffness_pNPerMicron+" pN.um-1 \n";
-	    }
-	    
-	    report+="--------------------------\n";
-	    report+="Output:\n";
-	    report+="\t Kappa  = "+kappa+" kT\n";
-	    report+="\t R^2  = "+cf.getRSquared()+"\n";
+	    String report="------------\n";
+	    report+="Bead Calibration of experiment:"+synchronizer.id+"\n";
+	    report+="Viscosity = "+this.dynamicViscosity+" Pa.s.\n";
+	    report+="Bead radius = "+(this.beadDiameterInMicrons/2.0)+" um.\n";
+	    report+="One pix = "+this.onePixToMicrons+" um.\n";
+	    report+="Stiffness = "+stiffness+" pN.um-1.\n";
 	    
 	    uiService.show(report);
 	    lService.info(report);
 	    
-	    Plot f2sigmaPlot;
-	    if (this.appendToExistingGraph) {
-	    	// look for existing previous graph
-	    	Window existingGraphWindow = WindowManager.getWindow(graphTitle);	    	
-	    	if (existingGraphWindow==null) {
-	    		System.err.println("Couldn't find preexisting "+graphTitle+" plot.");
-	    		f2sigmaPlot = new Plot(graphTitle,"Sigma (N.m-1)","Force^2(pN^2)");
-	    	} else {
-		    	if (existingGraphWindow.getClass().equals(PlotWindow.class)) {
-		    		f2sigmaPlot = ((PlotWindow) existingGraphWindow).getPlot();
-		    	} else {
-		    		System.err.println("Couldn't find preexisting "+graphTitle+" plot.");
-		    		f2sigmaPlot = new Plot(graphTitle,"Sigma (N.m-1)","Force^2(pN^2)");
-		    	}
-	    	}	
-	    } else {
-	    	f2sigmaPlot = new Plot(graphTitle,"Sigma (N.m-1)","Force^2(pN^2)");//	
-	    }
-	      
-	    for (int i=0;i<numberOfTimeSteps;i++) {
-	    	mbTensionInNperM[i]+=sigma0;
-	    }
-	    xFit[0]+=sigma0;
-	    xFit[1]+=sigma0;
-	    yFit[0]*=1e24;
-	    yFit[1]*=1e24;
-	    */
-	    
-	    /*f2sigmaPlot = new Plot(graphTitle,"Sigma (N.m-1)","Force^2(pN^2)");
-
-	    f2sigmaPlot.setColor(new Color(dataColor.getRed(),dataColor.getBlue(),dataColor.getGreen()));
-	    f2sigmaPlot.addPoints(mbTensionInNperM, forceNorm2InPN2, Plot.CROSS);
-	    f2sigmaPlot.setColor(new Color(fitColor.getRed(),fitColor.getBlue(),fitColor.getGreen()));
-	    f2sigmaPlot.addPoints(xFit, yFit, Plot.LINE);
-	    f2sigmaPlot.show();*/
 	}
 
 }

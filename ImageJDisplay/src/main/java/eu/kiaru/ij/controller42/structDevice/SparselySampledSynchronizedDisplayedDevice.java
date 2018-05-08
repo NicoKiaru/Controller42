@@ -33,7 +33,8 @@ abstract public class SparselySampledSynchronizedDisplayedDevice<T> extends Defa
 
 	@Override
 	final synchronized public void setDisplayedTime(LocalDateTime time) {
-		if (this.initialized) {
+		// Unsupported operation
+		/*if (this.initialized) {
 			// Needs to find the correct image number
 			// Converted to local time since it doesn't work otherwise...
 			Duration timeInterval = Duration.between(this.startAcquisitionTime.toLocalTime(),time.toLocalTime());//.dividedBy(numberOfImages-1).toNanos()
@@ -56,9 +57,9 @@ abstract public class SparselySampledSynchronizedDisplayedDevice<T> extends Defa
 				displayCurrentSample();
 			}*/
 			
-		} else {
+		/*} else {
 			System.out.println("Sampling of device "+this.getName()+" not initialized");
-		}
+		}*/
 	}
 	
 	
