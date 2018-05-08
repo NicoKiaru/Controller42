@@ -39,6 +39,10 @@ public class UniformTimeIterator implements Iterator<LocalDateTime>{
 		return numberOfSteps;
 	}
 	
+	public double getDurationBetweenSamplesInMs() {
+		return this.avgTimeBetweenSamplesInMs;
+	}
+	
 	@Override
 	public boolean hasNext() {
 		// TODO Auto-generated method stub

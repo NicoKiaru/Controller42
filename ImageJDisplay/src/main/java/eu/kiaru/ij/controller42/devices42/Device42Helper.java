@@ -25,7 +25,7 @@ public class Device42Helper {
         Map<String, Class> iMap = new HashMap<>();
         iMap.put("ALADDIN", null);
         iMap.put("TRACKER", CamTrackerDevice42.class);
-        iMap.put("MP_285", null);
+        iMap.put("MP_285", MP285Device42.class);
         iMap.put("NikonTIControl", null);
         iMap.put("Shutter", null);
         iMap.put("Shutter_Listen", null);
@@ -44,7 +44,7 @@ public class Device42Helper {
         Map<String, Class> iMap = new HashMap<>();
         iMap.put("Aladdin", null);
         iMap.put("CAMERA_GUPPY.LOG", CameraDevice42.class);
-        iMap.put("MP_285", null);
+        iMap.put("MP_285", MP285Device42.class);
         iMap.put("NikonTIControl", null);
         iMap.put("Shutter", null);
         iMap.put("Shutter_Listen", null);
@@ -242,6 +242,7 @@ public class Device42Helper {
 	}
 	
 	
+	
 	static public LocalTime fromCameraLogLine(String str) {
 
 		str = str.substring(str.indexOf('\t')+1);
@@ -263,5 +264,27 @@ public class Device42Helper {
 		int ns = (int)(ds*1e9);
 		return LocalTime.of(h, m, s, ns);
 	}	
+	
+	static public LocalTime fromMP285LogLine(String str) {
+
+		int nextIndex = str.indexOf("\t");
+		String hour = str.substring(0, nextIndex);
+		str=str.substring(nextIndex+1, str.length());
+		
+		nextIndex = str.indexOf("\t");
+		String minute = str.substring(0, nextIndex);
+		str=str.substring(nextIndex+1, str.length());
+		
+		nextIndex = str.indexOf("\t");
+		String second = str.substring(0, nextIndex);
+		
+		int h = Integer.parseInt(hour);
+		int m = Integer.parseInt(minute);
+		double ds = Double.parseDouble(second);
+		int s =(int)ds;
+		ds=ds-(int)ds;
+		int ns = (int)(ds*1e9);
+		return LocalTime.of(h, m, s, ns);
+	}
 	
 }
