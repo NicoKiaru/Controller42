@@ -1,7 +1,5 @@
 package eu.kiaru.ij.controller42.opticalTrapCalibration;
 
-import java.awt.Color;
-import java.awt.Window;
 import java.time.LocalDateTime;
 
 import org.scijava.command.Command;
@@ -10,24 +8,19 @@ import org.scijava.object.ObjectService;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.ui.UIService;
-import org.scijava.util.ColorRGB;
 
 import eu.kiaru.ij.controller42.DSDevicesSynchronizer;
 import eu.kiaru.ij.controller42.devices42.CamTrackerDevice42;
 import eu.kiaru.ij.controller42.devices42.MP285Device42;
-import eu.kiaru.ij.controller42.devices42.ZaberDevice42;
 import eu.kiaru.ij.controller42.stdDevices.ImagePlusDeviceUniformlySampled;
+import eu.kiaru.ij.controller42.stdDevices.UniformlySampledDeviceLivePlot;
 import eu.kiaru.ij.controller42.structTime.UniformTimeIterator;
-import ij.WindowManager;
 import ij.gui.Plot;
-import ij.gui.PlotWindow;
 import ij.measure.CurveFitter;
 
 @Plugin(type = Command.class, menuPath = "Controller 42>Optical Trap Calibrate")
 public class ComputeStiffness implements Command {
 	
-	//@Parameter
-	//String synchronizerID;
 	@Parameter
 	DSDevicesSynchronizer synchronizer;
 	
@@ -49,15 +42,6 @@ public class ComputeStiffness implements Command {
     @Parameter
     int stepFrame = 1;
 	
-	/*@Parameter
-	double x0Trap=0f;
-	
-	@Parameter
-	double y0Trap=0f;*/
-	
-	/*@Parameter
-	boolean ignoreYPosition = true;*/
-	
     @Parameter
     double beadDiameterInMicrons = 3;
     
@@ -66,15 +50,6 @@ public class ComputeStiffness implements Command {
     
     @Parameter
 	double onePixToMicrons = 0.077;
-	
-    @Parameter
-    ColorRGB fitColor;
-    
-    @Parameter
-    ColorRGB dataColor;
-    
-    /*@Parameter
-    boolean appendToExistingGraph;*/
 	
     @Parameter
     private ObjectService objService;
@@ -89,18 +64,7 @@ public class ComputeStiffness implements Command {
     String graphTitle="Bead displacement (um) vs Speed ( um.s-1 )";
 	
 	@Override
-	public void run() {		
-		/*DSDevicesSynchronizer mySync=null;
-		for (DSDevicesSynchronizer synchronizer : objService.getObjects(DSDevicesSynchronizer.class)) {
-			if (synchronizer.id.equals(synchronizerID)) {
-				mySync=synchronizer;
-				break;
-			}			
-		};
-		if (mySync==null) {
-			System.err.println("Synchronizer id not found!");
-			return;
-		}*/
+	public void run() {
 		
 		// Looking for devices		
 		MP285Device42 mp = (MP285Device42) synchronizer.getDevices().get(mp285DeviceName);
@@ -128,7 +92,6 @@ public class ComputeStiffness implements Command {
 		UniformTimeIterator timeIt = new UniformTimeIterator(camDevice, initialFrame, endFrame, stepFrame);
 		
 		int numberOfTimeSteps = timeIt.getNumberOfSteps();
-		//double[] zPos = new double[numberOfTimeSteps];
 		double[] xPosBead = new double[numberOfTimeSteps];
 		double[] yPosBead = new double[numberOfTimeSteps];
 		
@@ -137,24 +100,14 @@ public class ComputeStiffness implements Command {
 		
 		double[] xSpeedMP = new double[numberOfTimeSteps];
 		double[] ySpeedMP = new double[numberOfTimeSteps];
-		
-		/*double[] forceXInpN = new double[numberOfTimeSteps];
-		double[] forceX2InpN2 = new double[numberOfTimeSteps];
-		double[] forceYInpN = new double[numberOfTimeSteps];
-		double[] forceY2InpN2 = new double[numberOfTimeSteps];
-		double[] forceNormInPN = new double[numberOfTimeSteps];
-		double[] forceNorm2InPN2 = new double[numberOfTimeSteps];
-		double[] forceNorm2InN2 = new double[numberOfTimeSteps];
-		double[] mbTensionInNperM = new double[numberOfTimeSteps];*/
+		double[] tPos = new double[numberOfTimeSteps];
 		
 		int index=0;
 		
-		//double pascalToMbTensionScaleFactor = 1/2f*(1/(1/pipetteRadiusInMicrons-1/vesicleRadiusInMicrons))*1e-6; // because microns...
-		
 	    while (timeIt.hasNext()) {
 	    	LocalDateTime cTime = timeIt.next();
-	    	
-	    	//zPos[index]=zaber.getSample(cTime);
+	    	tPos[index] = index;
+
 	    	xPosBead[index]=tracker.getSample(cTime)[1]*this.onePixToMicrons;
 	    	yPosBead[index]=tracker.getSample(cTime)[2]*this.onePixToMicrons;
 	    	
@@ -171,6 +124,13 @@ public class ComputeStiffness implements Command {
 	    
 	    Plot xspeedPlot = new Plot("x z plot","XPOS (um)","MP 285 Speed (um.s-1)");
 	    xspeedPlot.addPoints(xPosBead, xSpeedMP, Plot.CROSS);
+	    
+	    // Display MP285 speed X vs number of image
+	    UniformlySampledDeviceLivePlot livePlotSpeedMP285 = new UniformlySampledDeviceLivePlot();
+	    livePlotSpeedMP285.initDevice(graphTitle, "Time", "MP285SpeedX(um.s-1)", tPos,xSpeedMP);
+	    livePlotSpeedMP285.setSamplingInfos(timeIt.startTime, timeIt.endTime, timeIt.getNumberOfSteps());
+	    synchronizer.addDevice(livePlotSpeedMP285);	    
+	    livePlotSpeedMP285.showDisplay();
 	    
 	    	        
 	    CurveFitter cf = new CurveFitter(xPosBead, xSpeedMP);
