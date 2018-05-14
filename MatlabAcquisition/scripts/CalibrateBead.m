@@ -1,6 +1,6 @@
 
 % sequence calibrate
-MP285L=c42.getDeviceByName('MP285_RIGHT');
+MP285L=c42.getDeviceByName('MP285_LEFT');
 % Set speed and displacement
 MP285L.setV(200,'c');MP285L.stepDistance=200;
 % Triangle Begin
