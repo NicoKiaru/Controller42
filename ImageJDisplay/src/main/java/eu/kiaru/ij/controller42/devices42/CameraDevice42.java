@@ -147,6 +147,5 @@ public class CameraDevice42 extends ImagePlusDeviceUniformlySampled {
 	public void initDevice(File f, int vers) {
 		logFile=f;	
 		logVersion=vers;
-		System.out.println("alors on a le logfile");
 	}
 }

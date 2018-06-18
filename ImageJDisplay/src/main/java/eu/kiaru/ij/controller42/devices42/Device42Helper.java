@@ -36,6 +36,7 @@ public class Device42Helper {
         iMap.put("ZABER", ZaberDevice42.class);
         iMap.put("ZDrive_Nikon", null);
         iMap.put("CAMERA", CameraDevice42.class);
+        iMap.put("MFCS", MFCSDevice42.class);
         devices42Map = Collections.unmodifiableMap(iMap);
     }
     
@@ -285,6 +286,10 @@ public class Device42Helper {
 		ds=ds-(int)ds;
 		int ns = (int)(ds*1e9);
 		return LocalTime.of(h, m, s, ns);
+	}
+	
+	static public LocalTime fromMFCSLogLine(String str) {
+		return fromMP285LogLine(str);
 	}
 	
 }

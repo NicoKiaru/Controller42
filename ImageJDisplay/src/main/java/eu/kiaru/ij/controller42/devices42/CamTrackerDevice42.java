@@ -116,10 +116,8 @@ public class CamTrackerDevice42 extends UniformlySampledSynchronizedDisplayedDev
 
 	@Override
 	protected void makeDisplayVisible() {
-		// TODO Auto-generated method stub
 		plotChartY.plot.show();	
-		plotChartX.plot.show();
-		
+		plotChartX.plot.show();		
 	}
 
 	@Override

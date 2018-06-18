@@ -118,7 +118,7 @@ abstract public class SparselySampledSynchronizedDisplayedDevice<T> extends Defa
 			//return null;// TODO getSample((int)indexSample);
 			
 		} else {
-			System.out.println("Sampling rate of device "+this.getName()+" not initialized");
+			System.out.println("Samples of device "+this.getName()+" not initialized");
 			return null;
 		}		
 
