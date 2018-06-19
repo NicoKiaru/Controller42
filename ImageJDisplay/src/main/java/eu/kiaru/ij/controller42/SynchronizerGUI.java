@@ -7,38 +7,28 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.scijava.command.Command;
+import org.scijava.command.CommandService;
 import org.scijava.object.ObjectService;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
 import eu.kiaru.ij.controller42.structDevice.DefaultSynchronizedDisplayedDevice;
 
-@Plugin(type = Command.class, menuPath = "Controller 42>Synchronizer options")
+@Plugin(type = Command.class, menuPath = "Controller 42>List devices")
 public class SynchronizerGUI implements Command{
 	
 	@Parameter
-	String synchronizerID;
+	DSDevicesSynchronizer mySync;
 	
     @Parameter
     private ObjectService objService;
 	
 	@Override
-	public void run() {		
-		DSDevicesSynchronizer mySync=null;
-		for (DSDevicesSynchronizer synchronizer : objService.getObjects(DSDevicesSynchronizer.class)) {
-			if (synchronizer.id.equals(synchronizerID)) {
-				mySync=synchronizer;
-				break;
-			}			
-		};
-		if (mySync==null) {
-			System.err.println("Synchronizer id not found!");
-			return;
-		}
+	public void run() {
 		
 		frame = new JFrame("Synchronizer options.");
 		frame.setSize(400, 100);		
-		idSynchronizerLabel = new JTextField("Synchronizer ID = "+idSynchronizer);
+		idSynchronizerLabel = new JTextField("Synchronizer ID = "+mySync.id);
 		idSynchronizerLabel.setEditable(false);
 		JPanel myPanel = new JPanel();
 		myPanel.setLayout(new GridLayout(1+mySync.getDevices().size(),1));
@@ -54,6 +44,5 @@ public class SynchronizerGUI implements Command{
 	
 	JFrame frame;
 	JTextField idSynchronizerLabel;
-	public String idSynchronizer;
 
 }

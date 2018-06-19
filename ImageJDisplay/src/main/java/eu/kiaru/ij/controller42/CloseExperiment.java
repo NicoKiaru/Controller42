@@ -8,32 +8,10 @@
 
 package eu.kiaru.ij.controller42;
 
-import net.imagej.ImageJ;
-
-import java.io.File;
-import java.io.FilenameFilter;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-
 import org.scijava.command.Command;
-import org.scijava.io.IOService;
 import org.scijava.object.ObjectService;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
-import org.scijava.ui.UIService;
-
-import eu.kiaru.ij.controller42.devices42.CamTrackerDevice42;
-import eu.kiaru.ij.controller42.devices42.Device42Factory;
-import eu.kiaru.ij.controller42.devices42.ZaberDevice42;
-import eu.kiaru.ij.controller42.stdDevices.ImagePlusDeviceUniformlySampled;
-import eu.kiaru.ij.controller42.stdDevices.LocalDateTimeDisplayer;
-import eu.kiaru.ij.controller42.stdDevices.StdDeviceFactory;
-import eu.kiaru.ij.controller42.structDevice.DefaultSynchronizedDisplayedDevice;
-import eu.kiaru.ij.controller42.structTime.UniformTimeIterator;
-import eu.kiaru.ij.slidebookExportedTiffOpener.ImgPlusFromSlideBookLogFactory;
-import ij.IJ;
-import ij.ImagePlus;
-import ij.WindowManager;
 
 /**
  * Todo

@@ -11,13 +11,19 @@ package eu.kiaru.ij.controller42;
 import net.imagej.Dataset;
 import net.imagej.ImageJ;
 
+import java.awt.GridLayout;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import org.scijava.command.Command;
+import org.scijava.command.CommandService;
 import org.scijava.io.IOService;
 import org.scijava.object.ObjectService;
 import org.scijava.plugin.Parameter;
@@ -59,6 +65,9 @@ public class LoadExperiment implements Command {
     
     @Parameter(label="Select a directory", style="directory") 
     private File myDir;
+    
+    @Parameter
+    CommandService cs;
 
     @Override
     public void run() {        
@@ -147,6 +156,9 @@ public class LoadExperiment implements Command {
         			imp.show();
         		}*/
         	}
+        	
+
+            
         }   
         
         LocalDateTimeDisplayer timeDisplay = new LocalDateTimeDisplayer();
@@ -162,8 +174,32 @@ public class LoadExperiment implements Command {
     	
         synchronizer.id=syncId;
     	objService.addObject(synchronizer);
+
+    	// list devices
+    	
+    	/*frame = new JFrame("Synchronizer options.");
+		frame.setSize(400, 100);		
+		idSynchronizerLabel = new JTextField("Synchronizer ID = "+synchronizer.id);
+		idSynchronizerLabel.setEditable(false);
+		JPanel myPanel = new JPanel();
+		myPanel.setLayout(new GridLayout(1+synchronizer.getDevices().size(),1));
+		myPanel.add(idSynchronizerLabel);
+		for (DefaultSynchronizedDisplayedDevice device:synchronizer.getDevices().values()) {	
+			JTextField tf = new JTextField(device.getName());			
+			tf.setEditable(false);
+			myPanel.add(tf);
+		}		
+		frame.add(myPanel);		
+		frame.setVisible(true);*/
+
+    	
+    	
     	
     }
+    
+
+	JFrame frame;
+	JTextField idSynchronizerLabel;
     
     /**
      * This main function serves for development purposes.

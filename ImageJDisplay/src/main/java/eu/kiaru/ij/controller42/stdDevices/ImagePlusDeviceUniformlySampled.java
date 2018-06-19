@@ -136,6 +136,10 @@ public class ImagePlusDeviceUniformlySampled extends UniformlySampledSynchronize
 			    printTimingPerTimepoint(meta, series);
 			    printTimingPerPlane(meta, series);*/
 		}
+		this.registerListener();
+	}
+	
+	public void registerListener() {
 		myImpPlus.addImageListener(this);
 	}
 
