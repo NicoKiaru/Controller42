@@ -127,15 +127,13 @@ public class ComputeStiffness implements Command {
 	    
 	    Plot xspeedPlot = new Plot("x z plot","XPOS (um)","MP 285 Speed (um.s-1)");
 	    xspeedPlot.addPoints(xPosBead, xSpeedMP, Plot.CROSS);
-	    
 	    // Display MP285 speed X vs number of image
-	    UniformlySampledDeviceLivePlot livePlotSpeedMP285 = new UniformlySampledDeviceLivePlot();
-	    livePlotSpeedMP285.initDevice(graphTitle, "Time", "MP285SpeedX(um.s-1)", tPos,xSpeedMP);
-	    livePlotSpeedMP285.setSamplingInfos(timeIt.startTime, timeIt.endTime, timeIt.getNumberOfSteps());
-	    synchronizer.addDevice(livePlotSpeedMP285);	    
-	    livePlotSpeedMP285.showDisplay();
+	    UniformlySampledDeviceLivePlot livePlotSpeedMP285X = new UniformlySampledDeviceLivePlot();
+	    livePlotSpeedMP285X.initDevice(graphTitle, "Time", "MP285SpeedX(um.s-1)", tPos,xSpeedMP);
+	    livePlotSpeedMP285X.setSamplingInfos(timeIt.startTime, timeIt.endTime, timeIt.getNumberOfSteps());
+	    synchronizer.addDevice(livePlotSpeedMP285X);	    
+	    livePlotSpeedMP285X.showDisplay();
 	    
-	    	        
 	    CurveFitter cf = new CurveFitter(xPosBead, xSpeedMP);
 	    cf.doFit(CurveFitter.STRAIGHT_LINE);
 	    
@@ -173,12 +171,73 @@ public class ComputeStiffness implements Command {
 	    
 	    double stiffness = factorSpeedToForceInpN*cf.getParams()[1];
 	    
-	    String report="------------\n";
+	    String report="---- X ----\n";
 	    report+="Bead Calibration of experiment:"+synchronizer.id+"\n";
 	    report+="Viscosity = "+this.dynamicViscosity+" Pa.s.\n";
 	    report+="Bead radius = "+(this.beadDiameterInMicrons/2.0)+" um.\n";
 	    report+="One pix = "+this.onePixToMicrons+" um.\n";
-	    report+="Stiffness = "+stiffness+" pN.um-1.\n";
+	    report+="Stiffness X = "+stiffness+" pN.um-1.\n";
+	    
+	    if (yCalibration) {
+	    	Plot yspeedPlot;
+	    	yspeedPlot = new Plot("y z plot","XPOS (um)","MP 285 Speed (um.s-1)");
+		    yspeedPlot.addPoints(yPosBead, ySpeedMP, Plot.CROSS);
+		    // Display MP285 speed X vs number of image
+		    UniformlySampledDeviceLivePlot livePlotSpeedMP285Y = new UniformlySampledDeviceLivePlot();
+		    livePlotSpeedMP285Y.initDevice(graphTitle, "Time", "MP285SpeedY(um.s-1)", tPos,ySpeedMP);
+		    livePlotSpeedMP285Y.setSamplingInfos(timeIt.startTime, timeIt.endTime, timeIt.getNumberOfSteps());
+		    synchronizer.addDevice(livePlotSpeedMP285Y);	    
+		    livePlotSpeedMP285Y.showDisplay();
+		    
+
+	        
+		    cf = new CurveFitter(yPosBead, ySpeedMP);
+		    cf.doFit(CurveFitter.STRAIGHT_LINE);
+		    
+		    xFit = new double[2];
+		    yFit = new double[2];
+		    
+		    minDisplacement = Double.MAX_VALUE;
+		    maxDisplacement = -Double.MAX_VALUE;
+		    
+		    for (int i=0;i<numberOfTimeSteps;i++) {
+		    	if (yPosBead[i]>maxDisplacement) {
+		    		maxDisplacement = yPosBead[i];
+		    	}
+		    	if (yPosBead[i]<minDisplacement) {
+		    		minDisplacement = yPosBead[i];
+		    	}
+		    	
+		    }
+		    xFit[0] = minDisplacement;
+		    xFit[1] = maxDisplacement;
+		    
+		    yFit[0] = cf.f(xFit[0]);
+		    yFit[1] = cf.f(xFit[1]);	   
+		    
+		    yspeedPlot.addPoints(xFit, yFit, Plot.LINE);
+		    
+		    yspeedPlot.show();
+		    
+		    System.out.println("------ Fit Displacement (um) vs Speed (um.s-1) ---------"); 
+		    
+		    System.out.println("R^2="+cf.getRSquared());
+		    System.out.println("Slope="+cf.getParams()[1]);
+		    
+		    factorSpeedToForceInpN = 6*java.lang.Math.PI*this.dynamicViscosity*this.beadDiameterInMicrons/2.0*1e-6*1e-6*1e12; // result in pN
+		    
+		    stiffness = factorSpeedToForceInpN*cf.getParams()[1];
+		    
+		    report+="---- Y ----\n";
+		    report+="Bead Calibration of experiment:"+synchronizer.id+"\n";
+		    report+="Viscosity = "+this.dynamicViscosity+" Pa.s.\n";
+		    report+="Bead radius = "+(this.beadDiameterInMicrons/2.0)+" um.\n";
+		    report+="One pix = "+this.onePixToMicrons+" um.\n";
+		    report+="Stiffness Y = "+stiffness+" pN.um-1.\n";
+		    
+	    }	    
+
+	    
 	    
 	    uiService.show(report);
 	    lService.info(report);
