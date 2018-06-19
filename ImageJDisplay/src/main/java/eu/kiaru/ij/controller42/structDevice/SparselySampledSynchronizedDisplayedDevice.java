@@ -32,7 +32,7 @@ abstract public class SparselySampledSynchronizedDisplayedDevice<T> extends Defa
 	}
 
 	@Override
-	final synchronized public void setDisplayedTime(LocalDateTime time) {
+	synchronized public void setDisplayedTime(LocalDateTime time) {
 		// Unsupported operation
 		/*if (this.initialized) {
 			// Needs to find the correct image number

@@ -41,6 +41,9 @@ public class ComputeStiffness implements Command {
     
     @Parameter
     int stepFrame = 1;
+    
+    @Parameter
+    boolean yCalibration = false;
 	
     @Parameter
     double beadDiameterInMicrons = 3;

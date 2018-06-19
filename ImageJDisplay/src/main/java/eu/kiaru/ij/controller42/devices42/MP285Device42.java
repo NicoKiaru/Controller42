@@ -3,10 +3,13 @@ package eu.kiaru.ij.controller42.devices42;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import eu.kiaru.ij.controller42.stdDevices.MyPlot;
 import eu.kiaru.ij.controller42.structDevice.SparselySampledSynchronizedDisplayedDevice;
 import eu.kiaru.ij.controller42.structDevice.TimedSample;
+import ij.gui.Plot;
 
 public class MP285Device42 extends SparselySampledSynchronizedDisplayedDevice<double[]> {
 
@@ -15,6 +18,8 @@ public class MP285Device42 extends SparselySampledSynchronizedDisplayedDevice<do
 		// TODO Auto-generated method stub
 		return null;
 	}*/
+	
+	MyPlot xPlot, yPlot, zPlot;
 
 	@Override
 	public void initDevice() {
@@ -39,32 +44,15 @@ public class MP285Device42 extends SparselySampledSynchronizedDisplayedDevice<do
 					cpos[0] = Double.parseDouble(parts[4]);
 					cpos[1] = Double.parseDouble(parts[5]);
 					cpos[2] = Double.parseDouble(parts[6]);
-					//System.out.println("["+cpos[0]+","+cpos[1]+","+cpos[2]+"]");
 					TimedSample3DPos currentSample = new TimedSample3DPos();
 					currentSample.sample = cpos;
 					currentSample.time = Device42Helper.fromMP285LogLine(line);
-					//System.out.println(currentSample.time);
-					this.samples.add(currentSample);
-					
+					this.samples.add(currentSample);					
 				}
-		    	/*posData[0][i]=i;
-		    	for (int j=1;j<5;j++) {
-		    		posData[j][i] = Float.parseFloat(parts[j]);
-		    	}*/
-				
-				/*
-				 * String line = reader.readLine();
-		    	String[] parts=line.split("\t");
-		    	posData[0][i]=i;
-		    	for (int j=1;j<5;j++) {
-		    		posData[j][i] = Float.parseFloat(parts[j]);
-		    	}
-				 */
 			});
 		   	reader.close();
 			this.samplesInitialized();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -73,42 +61,74 @@ public class MP285Device42 extends SparselySampledSynchronizedDisplayedDevice<do
 	int logVersion;
 	@Override
 	public void initDevice(File f, int version) {
-		// TODO Auto-generated method stub
 		System.out.println("File "+f.getName()+" is given, on version "+version+".");
-		// TODO Auto-generated method stub
 		logVersion=version;
 		logFile=f;
 	}
 
 	@Override
 	protected void makeDisplayVisible() {
-		// TODO Auto-generated method stub
-		
+		xPlot.plot.getImagePlus().show();
+		yPlot.plot.getImagePlus().show();
+		zPlot.plot.getImagePlus().show();
 	}
 
 	@Override
 	public void initDisplay() {
-		// TODO Auto-generated method stub
+		double[] tSamples = new double[this.samples.size()];
+		double[] xPos = new double[this.samples.size()];
+		double[] yPos = new double[this.samples.size()];
+		double[] zPos = new double[this.samples.size()];
+		for (int i=0;i<this.samples.size();i++) {
+			tSamples[i] = ((double)(this.samples.get(i).time.toNanoOfDay())/((double)1.0e9)); // in seconds
+			xPos[i] = this.samples.get(i).sample[0];
+			yPos[i] = this.samples.get(i).sample[1];
+			zPos[i] = this.samples.get(i).sample[2];
+		}
 		
+		xPlot =  new MyPlot();
+		xPlot.plot = new Plot(this.getName()+"_X","Time","Position",tSamples,xPos);	
+
+		yPlot =  new MyPlot();
+		yPlot.plot = new Plot(this.getName()+"_Y","Time","Position",tSamples,yPos);	
+
+		zPlot =  new MyPlot();
+		zPlot.plot = new Plot(this.getName()+"_Z","Time","Position",tSamples,zPos);	
+			
 	}
 
 	@Override
 	public void closeDisplay() {
-		// TODO Auto-generated method stub
-		
+		xPlot.plot.getImagePlus().close();
+		yPlot.plot.getImagePlus().close();
+		zPlot.plot.getImagePlus().close();
 	}
 
 	@Override
 	protected void makeDisplayInvisible() {
-		// TODO Auto-generated method stub
-		
+		xPlot.plot.getImagePlus().hide();
+		yPlot.plot.getImagePlus().hide();
+		zPlot.plot.getImagePlus().hide();
 	}
 
-	/*@Override
+	@Override
 	public void setDisplayedTime(LocalDateTime time) {
-		// TODO Auto-generated method stub
+		double centerLocation = ((double)(time.toLocalTime().toNanoOfDay())/((double)1.0e9));
+		double[] range = xPlot.plot.getLimits(); // xmin xmax ymin ymax
+		double width = range[1]-range[0];
+		xPlot.plot.setLimits(centerLocation-width/2.0, centerLocation+width/2.0, range[2], range[3]);
+		xPlot.checkLineAtCurrentLocation(centerLocation);
 		
-	}*/
+		range = yPlot.plot.getLimits(); // xmin xmax ymin ymax
+		width = range[1]-range[0];
+		yPlot.plot.setLimits(centerLocation-width/2.0, centerLocation+width/2.0, range[2], range[3]);
+		yPlot.checkLineAtCurrentLocation(centerLocation);
+		
+		range = zPlot.plot.getLimits(); // xmin xmax ymin ymax
+		width = range[1]-range[0];
+		zPlot.plot.setLimits(centerLocation-width/2.0, centerLocation+width/2.0, range[2], range[3]);
+		zPlot.checkLineAtCurrentLocation(centerLocation);
+	}
 
 }
 
